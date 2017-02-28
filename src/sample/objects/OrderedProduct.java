@@ -5,5 +5,6 @@ package sample.objects;
  */
 public class OrderedProduct {
     //TODO добавить поля id, prodId, amount
+    //Hello
 
 }
