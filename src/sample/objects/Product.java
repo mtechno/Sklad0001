@@ -7,7 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 /**
  * Created by Note-001 on 07.12.2016.
  */
-public class Product{
+public class Product {
     private SimpleIntegerProperty id = new SimpleIntegerProperty(1);
     private SimpleStringProperty name = new SimpleStringProperty(""); //этот тип используем для таблиц javafx
     private SimpleStringProperty storage = new SimpleStringProperty("");//автоматическое обновление их данных
@@ -15,7 +15,7 @@ public class Product{
     private SimpleObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(new Supplier(0, null, null, null));
     //private Supplier supplier;
 
-    public Product(){
+    public Product() {
 
     }
 
@@ -39,27 +39,25 @@ public class Product{
         this.supplier = new SimpleObjectProperty(supplier);
     }
 
-    public SimpleStringProperty nameProperty (){ //для таблицы
+    public SimpleStringProperty nameProperty() { //для таблицы
         return name;
     }
 
-    public SimpleStringProperty amountProperty (){
+    public SimpleStringProperty amountProperty() {
         return amount;
     }
 
-    public SimpleStringProperty storageProperty (){
+    public SimpleStringProperty storageProperty() {
         return storage;
     }
 
-    public SimpleObjectProperty supplierProperty () { return supplier; }
+    public SimpleObjectProperty supplierProperty() {
+        return supplier;
+    }
+
     @Override
     public String toString() {
-        return "Product{" +
-                "name='" + name + '\'' +
-                ", storage=" + storage +
-                ", amount=" + amount +
-                ", supplier=" + supplier.get() +
-                '}';
+        return name.get();
     }
 
 

@@ -3,6 +3,7 @@ package sample.objects;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.text.Format;
@@ -14,10 +15,36 @@ import java.util.Set;
 /**
  * Created by Note-001 on 07.12.2016.
  */
-public class Order{
+public class Order {
     private SimpleIntegerProperty orderNumber = new SimpleIntegerProperty(0);
-    private ObservableList<Product> productList;
+    //    private ObservableList<Product> productList;
+    private ObservableList<OrderedProduct> orderedProductList = FXCollections.observableArrayList();
     private SimpleStringProperty date = new SimpleStringProperty("");
+
+    public Order() {
+
+    }
+
+    public Order(int orderNumber, String date) {
+        this.orderNumber = new SimpleIntegerProperty(orderNumber);
+        this.date = new SimpleStringProperty(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderNumber=" + orderNumber +
+                ", date=" + date +
+                '}';
+    }
+
+    public ObservableList<OrderedProduct> getOrderedProductList() {
+        return orderedProductList;
+    }
+
+    public void setOrderedProductList(ObservableList<OrderedProduct> orderedProductList) {
+        this.orderedProductList = orderedProductList;
+    }
 
     public String getDate() {
         return date.get();
@@ -31,45 +58,30 @@ public class Order{
         this.date.set(date);
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderNumber=" + orderNumber +
-                ", date=" + date +
-                '}';
-    }
-
-    public Order(){
-
-    }
-
-
-
     public SimpleIntegerProperty orderNumberProperty() {
         return orderNumber;
     }
 
-    public ObservableList<Product> getProductList() {
-        return productList;
-    }
+    public void addOrderedProductToList(OrderedProduct orderedProduct) {
+        //есть ли в списке продуктов у заказа Добавляемый продукт
+        Boolean isAdd = true;
+        for (OrderedProduct oProd : orderedProductList){
+            if (oProd.getOrderedProduct().equals(orderedProduct.getOrderedProduct())){
+                isAdd = false;
+            }
+        }
 
-    public void setProductList(ObservableList<Product> productList) {
-        this.productList = productList;
-    }
-
-    public void addProductList(Product product){
-        this.productList.add(product);
-    }
-
-    public void createProductList(ObservableList<Product> productObservableList){
-        for (Product product:productObservableList){
-            this.productList.add(product);
+        if (isAdd) {
+            this.orderedProductList.add(orderedProduct);
         }
     }
 
-    public Order(int orderNumber, String date, ObservableList<Product> productList) {
-        this.orderNumber = new SimpleIntegerProperty(orderNumber);
-        this.date = new SimpleStringProperty(date);
+    public void removeOrderedProductFromList(OrderedProduct orderedProduct) {
+        this.orderedProductList.remove(orderedProduct);
+    }
+
+    public void clearOrderedProductList() {
+        this.orderedProductList.clear();
     }
 
     public int getOrderNumber() {

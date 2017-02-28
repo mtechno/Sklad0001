@@ -4,10 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.db.Connect;
 import sample.interfaces.Sklad;
-import sample.objects.Order;
-import sample.objects.Product;
-import sample.objects.Supplier;
-import sample.objects.User;
+import sample.objects.*;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -28,6 +25,7 @@ public class CollectionSklad implements Sklad {
     private ObservableList<Supplier> suppliersArrayList = FXCollections.observableArrayList();
     private ObservableList<Order> ordersArrayList = FXCollections.observableArrayList();
     private ObservableList<Product> productSelectedListForOrder = FXCollections.observableArrayList();
+    private ObservableList<OrderedProduct> orderedProductArrayList = FXCollections.observableArrayList();
 
     public ObservableList<Product> getProductSelectedListForOrder() {
         return productSelectedListForOrder;
@@ -100,6 +98,14 @@ public class CollectionSklad implements Sklad {
 //            productSelectedListForOrder.remove(product);
 //
 //        }
+    }
+
+    public ObservableList<OrderedProduct> getOrderedProductArrayList() {
+        return orderedProductArrayList;
+    }
+
+    public void setOrderedProductArrayList(ObservableList<OrderedProduct> orderedProductArrayList) {
+        this.orderedProductArrayList = orderedProductArrayList;
     }
 
     @Override
@@ -175,10 +181,45 @@ public class CollectionSklad implements Sklad {
                     productArrayList.add(new Product(resultSet.getInt("Id"),resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), suppliersArrayList.get(resultSet.getInt("Supplier_id")-1)));
                 }   else if (tableName.equals("Orders")){
 
-                    ordersArrayList.add(new Order(resultSet.getInt("Id"), resultSet.getString("Date"),
-                            productArrayList));
+                    ordersArrayList.add(new Order(resultSet.getInt("Id"), resultSet.getString("Date")));
                 }
             }
+        }
+        //отдельное чтение БД Ordered_Products, тк она содержит внешние ключи на другие таблицы
+        //сначала грузим выше данные из других таблиц, после эту
+        Map<String, ResultSet> mapInitialDB2 = Connect.readAllDB();
+        for (Map.Entry<String, ResultSet> entry: mapInitialDB2.entrySet()){
+            String tableName = entry.getKey();
+            ResultSet resultSet = entry.getValue();
+
+            while (resultSet!=null && resultSet.next()){
+                if (tableName.equals("Ordered_Products")){
+                    int orderedProductId = resultSet.getInt("id");
+                    int orderId = resultSet.getInt("order_id");
+                    int idProduct = resultSet.getInt("product_id");
+                    int amount = resultSet.getInt("amount");
+                    Product product = new Product();
+                    System.out.println(orderedProductId+" "+orderId+" "+idProduct+" "+amount);
+                    for (Product prod: productArrayList){
+                        if (prod.getId()==idProduct){
+                            product = prod;
+                            System.out.println(product);
+                        }
+                    }
+
+                    for (Order order: ordersArrayList){
+                        System.out.println(order.getOrderNumber());
+                        if (order.getOrderNumber()==orderId){
+                            order.addOrderedProductToList(new OrderedProduct(orderedProductId,product,amount));
+                        }
+                    }
+
+
+
+                }
+            }
+
+
         }
 
     }
