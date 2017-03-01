@@ -264,7 +264,6 @@ public class Controller {
 //                System.out.println(collectionSklad.getProductArrayList());
                 break;
             case "butDelSup"://кнопка Удалить
-                Connect.deleteDB(selectedSupplier);
                 collectionSklad.delete(selectedSupplier);
                 tableProducts.setItems(collectionSklad.getProductArrayList());
                 break;
@@ -296,7 +295,6 @@ public class Controller {
                 showDlgOrder(); //создание диалогового окна
                 break;
             case "butDelOrder"://кнопка Удалить
-                Connect.deleteDB(selectedOrder);
                 collectionSklad.delete(selectedOrder);
                 break;
         }

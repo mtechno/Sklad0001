@@ -17,60 +17,24 @@ import java.util.Set;
  */
 public class Order {
     private SimpleIntegerProperty orderNumber = new SimpleIntegerProperty(0);
-    //    private ObservableList<Product> productList;
     private ObservableList<OrderedProduct> orderedProductList = FXCollections.observableArrayList();
     private SimpleStringProperty date = new SimpleStringProperty("");
 
-    public Order() {
-
-    }
-
+    //============================================================================================
     public Order(int orderNumber, String date) {
         this.orderNumber = new SimpleIntegerProperty(orderNumber);
         this.date = new SimpleStringProperty(date);
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderNumber=" + orderNumber +
-                ", date=" + date +
-                '}';
-    }
-
-    public ObservableList<OrderedProduct> getOrderedProductList() {
-        return orderedProductList;
-    }
-
-    public void setOrderedProductList(ObservableList<OrderedProduct> orderedProductList) {
-        this.orderedProductList = orderedProductList;
-    }
-
-    public String getDate() {
-        return date.get();
-    }
-
-    public SimpleStringProperty dateProperty() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date.set(date);
-    }
-
-    public SimpleIntegerProperty orderNumberProperty() {
-        return orderNumber;
-    }
-
+    //==============================orderedProduct===========================================
     public void addOrderedProductToList(OrderedProduct orderedProduct) {
         //есть ли в списке продуктов у заказа Добавляемый продукт
         Boolean isAdd = true;
-        for (OrderedProduct oProd : orderedProductList){
-            if (oProd.getOrderedProduct().equals(orderedProduct.getOrderedProduct())){
+        for (OrderedProduct oProd : orderedProductList) {
+            if (oProd.getOrderedProduct().equals(orderedProduct.getOrderedProduct())) {
                 isAdd = false;
             }
         }
-
         if (isAdd) {
             this.orderedProductList.add(orderedProduct);
         }
@@ -84,11 +48,49 @@ public class Order {
         this.orderedProductList.clear();
     }
 
+    public ObservableList<OrderedProduct> getOrderedProductList() {
+        return orderedProductList;
+    }
+
+    public void setOrderedProductList(ObservableList<OrderedProduct> orderedProductList) {
+        this.orderedProductList = orderedProductList;
+    }
+
+    //===============================orderNumber===========================================
     public int getOrderNumber() {
         return orderNumber.get();
     }
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber.set(orderNumber);
+    }
+
+    public SimpleIntegerProperty orderNumberProperty() {
+        return orderNumber;
+    }
+
+    //===============================date==================================================
+    public String getDate() {
+        return date.get();
+    }
+
+    public SimpleStringProperty dateProperty() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date.set(date);
+    }
+
+    //====================================================================================
+    public Order() {
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderNumber=" + orderNumber +
+                ", date=" + date +
+                '}';
     }
 }

@@ -6,7 +6,21 @@ import javafx.beans.property.SimpleStringProperty;
 /**
  * Created by Note-001 on 07.12.2016.
  */
-public class Supplier{
+public class Supplier {
+    private SimpleIntegerProperty id = new SimpleIntegerProperty(1);
+    private SimpleStringProperty company = new SimpleStringProperty("");
+    private SimpleStringProperty address = new SimpleStringProperty("");
+    private SimpleStringProperty phone = new SimpleStringProperty("");
+
+    //===================================================================================
+    public Supplier(int id, String company, String address, String phone) {
+        this.id = new SimpleIntegerProperty(id);
+        this.company = new SimpleStringProperty(company);
+        this.address = new SimpleStringProperty(address);
+        this.phone = new SimpleStringProperty(phone);
+    }
+
+    //==================================id==============================================
     public int getId() {
         return id.get();
     }
@@ -19,35 +33,10 @@ public class Supplier{
         this.id.set(id);
     }
 
-    private SimpleIntegerProperty id = new SimpleIntegerProperty(1);
-    private SimpleStringProperty company = new SimpleStringProperty("");
-    private SimpleStringProperty address = new SimpleStringProperty("");
-    private SimpleStringProperty phone = new SimpleStringProperty("");
-
-    public Supplier(){
-
-    }
-
-
-    public Supplier(int id, String company, String address, String phone) {
-        this.id = new SimpleIntegerProperty(id);
-        this.company = new SimpleStringProperty(company);
-        this.address = new SimpleStringProperty(address);
-        this.phone = new SimpleStringProperty(phone);
-    }
-
-    public SimpleStringProperty companyProperty (){ //для таблицы
+    //===================================company==============================================
+    public SimpleStringProperty companyProperty() { //для таблицы
         return company;
     }
-
-    public SimpleStringProperty addressProperty (){
-        return address;
-    }
-
-    public SimpleStringProperty phoneProperty (){
-        return phone;
-    }
-
 
     public String getCompany() {
         return company.get();
@@ -55,6 +44,11 @@ public class Supplier{
 
     public void setCompany(String company) {
         this.company.set(company);
+    }
+
+    //====================================address========================================
+    public SimpleStringProperty addressProperty() {
+        return address;
     }
 
     public String getAddress() {
@@ -65,6 +59,11 @@ public class Supplier{
         this.address.set(address);
     }
 
+    //=====================================phone=======================================
+    public SimpleStringProperty phoneProperty() {
+        return phone;
+    }
+
     public String getPhone() {
         return phone.get();
     }
@@ -73,8 +72,12 @@ public class Supplier{
         this.phone.set(phone);
     }
 
+    //===================================================================================
     @Override
     public String toString() {
         return company.get();
+    }
+
+    public Supplier() {
     }
 }

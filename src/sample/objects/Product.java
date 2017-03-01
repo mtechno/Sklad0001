@@ -13,12 +13,17 @@ public class Product {
     private SimpleStringProperty storage = new SimpleStringProperty("");//автоматическое обновление их данных
     private SimpleStringProperty amount = new SimpleStringProperty("");
     private SimpleObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(new Supplier(0, null, null, null));
-    //private Supplier supplier;
 
-    public Product() {
-
+    //================================================================================================
+    public Product(int id, String name, String amount, String storage, Supplier supplier) {
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.storage = new SimpleStringProperty(storage);
+        this.amount = new SimpleStringProperty(amount);
+        this.supplier = new SimpleObjectProperty(supplier);
     }
 
+    //===================================id===========================================================
     public int getId() {
         return id.get();
     }
@@ -31,44 +36,35 @@ public class Product {
         this.id.set(id);
     }
 
-    public Product(int id, String name, String amount, String storage, Supplier supplier) {
-        this.id = new SimpleIntegerProperty(id);
-        this.name = new SimpleStringProperty(name);
-        this.storage = new SimpleStringProperty(storage);
-        this.amount = new SimpleStringProperty(amount);
-        this.supplier = new SimpleObjectProperty(supplier);
-    }
-
+    //==================================name==========================================================
     public SimpleStringProperty nameProperty() { //для таблицы
         return name;
     }
 
-    public SimpleStringProperty amountProperty() {
-        return amount;
-    }
-
-    public SimpleStringProperty storageProperty() {
-        return storage;
-    }
-
-    public SimpleObjectProperty supplierProperty() {
-        return supplier;
-    }
-
-    @Override
-    public String toString() {
-        return name.get();
-    }
-
-
     public String getName() {
-
         return name.get();
     }
 
     public void setName(String name) {
         this.name.set(name);
+    }
 
+    //==================================amount==========================================================
+    public SimpleStringProperty amountProperty() {
+        return amount;
+    }
+
+    public String getAmount() {
+        return amount.get();
+    }
+
+    public void setAmount(String amount) {
+        this.amount.set(amount);
+    }
+
+    //==================================storage==========================================================
+    public SimpleStringProperty storageProperty() {
+        return storage;
     }
 
     public String getStorage() {
@@ -77,12 +73,13 @@ public class Product {
 
     public void setStorage(String storage) {
         this.storage.set(storage);
-
     }
 
-    public String getAmount() {
-        return amount.get();
+    //==================================supplier==========================================================
+    public SimpleObjectProperty supplierProperty() {
+        return supplier;
     }
+
 
     public Supplier getSupplier() {
         return supplier.get();
@@ -90,13 +87,16 @@ public class Product {
 
     public void setSupplier(Supplier supplier) {
         this.supplier.set(supplier);
-
     }
 
-    public void setAmount(String amount) {
+    //================================================================================================
+    @Override
+    public String toString() {
+        return name.get();
+    }
 
-        this.amount.set(amount);
 
+    public Product() {
     }
 
 }

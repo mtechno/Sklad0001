@@ -21,9 +21,9 @@ public interface Sklad {
 
     void create(Supplier supplier) throws SQLException;
     void update(Supplier supplier);
-    void delete(Supplier supplier);
+    void delete(Supplier supplier) throws SQLException;
 
     void create(Order order) throws SQLException;
     void update(Order order);
-    void delete(Order order);
+    void delete(Order order) throws SQLException;
 }

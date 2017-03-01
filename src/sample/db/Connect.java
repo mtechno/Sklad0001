@@ -20,20 +20,12 @@ public class Connect {
 
     //===== ПОКДЛЮЧЕНИЕ К БД ===========
     public static void conn() throws ClassNotFoundException, SQLException {
-
         connection = null;
         System.out.println(Class.forName("org.sqlite.JDBC"));
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:sklad_pilot.db");
-        System.out.println("БД подкоючена");
-    }
-
-    //========Создание таблицы==============
-    public static void createTable() throws SQLException {
         statement = connection.createStatement();
-        statement.execute("CREATE TABLE if not exists 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'phone' INT);");
-
-        System.out.println("Таблица создана или уже есть");
+        System.out.println("БД подкоючена");
     }
 
     //=======Заполнение таблиц==============
@@ -43,66 +35,66 @@ public class Connect {
         String amount = product.getAmount();
         int supplier_id = 1;
         String storage = product.getStorage();
+
         Statement st = connection.createStatement();
-        System.out.println("select Id from supplier where name=" + product.getSupplier().getCompany());
-        ResultSet rs = st.executeQuery("select Id from supplier where name='" + product.getSupplier().getCompany()+"'");
+        ResultSet rs = st.executeQuery("select Id from supplier where name='" + product.getSupplier().getCompany() + "'");
         while (rs.next()) {
             supplier_id = rs.getInt("Id");
         }
 
         st.execute("INSERT INTO Product (Name, Amount, Supplier_id, Storage) VALUES ( '" + name + "' , '" + amount + "' , '" + supplier_id + "' , '" + storage + "' ); ");
-
-        System.out.println("Таблица продуктов заполнена");
     }
+
     //Supplier
     public static void writeDB(Supplier supplier) throws SQLException {
         String name = supplier.getCompany();
         String address = supplier.getAddress();
         String telephone = supplier.getPhone();
+
         Statement st = connection.createStatement();
         st.execute("INSERT INTO Supplier (Name, Address, Telephone) VALUES ( '" + name + "' , '" + address + "' , '" + telephone + "' ); ");
-
-        System.out.println("Таблица поставщиков заполнена");
     }
+
     //Orders
     public static void writeDB(Order order) throws SQLException {
-
+        String orderDate = order.getDate();
 
         Statement st = connection.createStatement();
-        st.execute("INSERT INTO Orders (Date) VALUES ( '" + order.getDate() + "' ); ");
-
-        System.out.println("Таблица заказов заполнена");
+        st.execute("INSERT INTO Orders (Date) VALUES ( '" + orderDate + "' ); ");
     }
+
     //Ordered_Products
     public static void writeDBOrderedProducts(Product product) throws SQLException {
-
+        //TODO реализовать
         Statement st = connection.createStatement();
 
-//        st.execute("INSERT INTO Orders (Date) VALUES ( '" + date + "' ); ");
-
-        System.out.println("Таблица заказов заполнена");
     }
-    //=======UPDATE DB=======================
+
+    //=================UPDATE DB=======================
     public static void updateDB(Product product) throws SQLException {
-        statement.executeUpdate("update product set name='"+product.getName()+"',amount='"+product.getAmount()+"',supplier_id='"+product.getSupplier().getId()+"',storage="+product.getStorage()+" where id="+product.getId());
+        statement.executeUpdate("update product set name='" + product.getName() + "',amount='" + product.getAmount() + "',supplier_id='" + product.getSupplier().getId() + "',storage=" + product.getStorage() + " where id=" + product.getId());
     }
-    public static void updateDB(Supplier supplier) throws SQLException {
-        statement.executeUpdate("update supplier set name='"+supplier.getCompany()+"',address='"+supplier.getAddress()+"',telephone='"+supplier.getPhone()+"' where id="+supplier.getId());
-    }
-    public static void updateDB(Order order) throws SQLException {
-        statement.executeUpdate("update orders set date='"+order.getDate()+"' where id="+order.getOrderNumber());
-    }
-//================Delete row DB===============
-    public static void deleteDB(Product product) throws SQLException {
-    statement.executeUpdate("delete from product where id="+product.getId());
-}
-    public static void deleteDB(Supplier supplier) throws SQLException {
-    statement.executeUpdate("delete from supplier where id="+supplier.getId());
-}
-    public static void deleteDB(Order order) throws SQLException {
-    statement.executeUpdate("delete from orders where id="+order.getOrderNumber());
-}
 
+    public static void updateDB(Supplier supplier) throws SQLException {
+        statement.executeUpdate("update supplier set name='" + supplier.getCompany() + "',address='" + supplier.getAddress() + "',telephone='" + supplier.getPhone() + "' where id=" + supplier.getId());
+    }
+
+    public static void updateDB(Order order) throws SQLException {
+        statement.executeUpdate("update orders set date='" + order.getDate() + "' where id=" + order.getOrderNumber());
+    }
+
+    //================DELETE row from DB===============
+    public static void deleteDB(Product product) throws SQLException {
+        statement.executeUpdate("delete from product where id=" + product.getId());
+    }
+
+    public static void deleteDB(Supplier supplier) throws SQLException {
+        statement.executeUpdate("delete from supplier where id=" + supplier.getId());
+    }
+
+    public static void deleteDB(Order order) throws SQLException {
+        statement.executeUpdate("delete from orders where id=" + order.getOrderNumber());
+    }
 
     //======Вывод из БД======================
     //Грузим все содержимое БД
@@ -119,46 +111,48 @@ public class Connect {
                 resultSetMap.put(tableName, statement.executeQuery("Select * from " + tableName));
             }
         }
+        stateGetNames.close();
+        resultSet.close();
         return resultSetMap;
     }
 
-    //======Закрытие==========================
-    public static void closeDB() throws SQLException {
-        connection.close();
-        statement.close();
-        resultSet.close();
-
-        System.out.println("Закрыли соединения");
-
-    }
-
+    //======READING FROM DB======================
+    //Product
     public static int readIDDB(Product product) throws SQLException {
         int id = 0;
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("select id from product where rowid=last_insert_rowid()");
-        while (rs.next()){
+        while (rs.next()) {
             id = rs.getInt(1);
         }
         return id;
     }
+
+    //Supplier
     public static int readIDDB(Supplier supplier) throws SQLException {
         int id = 0;
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("select id from supplier where rowid=last_insert_rowid()");
-        while (rs.next()){
+        while (rs.next()) {
             id = rs.getInt(1);
         }
         return id;
     }
+
+    //Order
     public static int readIDDB(Order order) throws SQLException {
         int id = 0;
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery("select id from orders where rowid=last_insert_rowid()");
-        while (rs.next()){
+        while (rs.next()) {
             id = rs.getInt(1);
         }
         return id;
     }
-
-
+    //======Close Connection==========================
+    public static void closeDB() throws SQLException {
+        connection.close();
+        statement.close();
+        resultSet.close();
+    }
 }

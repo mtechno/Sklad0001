@@ -27,38 +27,13 @@ public class CollectionSklad implements Sklad {
     private ObservableList<Product> productSelectedListForOrder = FXCollections.observableArrayList();
     private ObservableList<OrderedProduct> orderedProductArrayList = FXCollections.observableArrayList();
 
-    public ObservableList<Product> getProductSelectedListForOrder() {
-        return productSelectedListForOrder;
-    }
 
-    public void setProductSelectedListForOrder(ObservableList<Product> productSelectedListForOrder) {
-
-        this.productSelectedListForOrder = productSelectedListForOrder;
-    }
-
-    public ObservableList<Product> getProductArrayList() {
-        return productArrayList;
-    }
-
-    public ObservableList<User> getUsersArrayList() {
-        return usersArrayList;
-    }
-
-    public ObservableList getSuppliersArrayList() {
-        return suppliersArrayList;
-    }
-
-    public ObservableList<Order> getOrdersArrayList() {
-        return ordersArrayList;
-    }
-
+    //=====================CRUD PRODUCT LIST and DB===============================================
     @Override
     public void create(Product product) throws SQLException {
         Connect.writeDB(product);
         product.setId(Connect.readIDDB(product));
-
         productArrayList.add(product);
-
     }
 
     @Override
@@ -71,51 +46,24 @@ public class CollectionSklad implements Sklad {
         productArrayList.remove(product);
     }
 
-    public void createSelected(Product product) {
-        productSelectedListForOrder.add(product);
-    }
-
-    public void deleteSelected(Product product) {
-        productSelectedListForOrder.remove(product);
-        System.out.println(productSelectedListForOrder);
-    }
-
-    public void create(ObservableList<Product> productObservableList) throws SQLException {
-        System.out.println("productSelectedListForOrder="+productSelectedListForOrder.size());
-        for (Product product : productObservableList) {
-//            Connect.writeDBOrderedProducts(product);
-            productSelectedListForOrder.add(product);
-        }
-    }
-
+    //=====================CRUD ORDER PRODUCTS SELECTED LIST and DB===============================================
     public void deleteProductSelectedListForOrder() {
         productSelectedListForOrder.removeAll();
     }
 
     public void delete(ObservableList<Product> productObservableList) {
         productSelectedListForOrder.clear();
-//        for (Product product:productObservableList){
-//            productSelectedListForOrder.remove(product);
-//
-//        }
     }
 
-    public ObservableList<OrderedProduct> getOrderedProductArrayList() {
-        return orderedProductArrayList;
-    }
-
-    public void setOrderedProductArrayList(ObservableList<OrderedProduct> orderedProductArrayList) {
-        this.orderedProductArrayList = orderedProductArrayList;
-    }
-
+    //=====================CRUD USER LIST and DB===============================================
     @Override
     public void create(User user) {
+        //TODO реализовать CRUD DB
         usersArrayList.add(user);
     }
 
     @Override
     public void update(User user) {
-
     }
 
     @Override
@@ -123,12 +71,12 @@ public class CollectionSklad implements Sklad {
         usersArrayList.remove(user);
     }
 
+    //=====================CRUD SUPPLIER LIST and DB===============================================
     @Override
     public void create(Supplier supplier) throws SQLException {
         Connect.writeDB(supplier);
         supplier.setId(Connect.readIDDB(supplier));
         suppliersArrayList.add(supplier);
-
     }
 
     @Override
@@ -141,16 +89,17 @@ public class CollectionSklad implements Sklad {
     }
 
     @Override
-    public void delete(Supplier supplier) {
+    public void delete(Supplier supplier) throws SQLException {
+        Connect.deleteDB(supplier);
         suppliersArrayList.remove(supplier);
     }
 
+    //=====================CRUD ORDER LIST and DB===============================================
     @Override
     public void create(Order order) throws SQLException {
         Connect.writeDB(order);
         order.setOrderNumber(Connect.readIDDB(order));
         ordersArrayList.add(order);
-
     }
 
     @Override
@@ -163,11 +112,12 @@ public class CollectionSklad implements Sklad {
     }
 
     @Override
-    public void delete(Order order) {
+    public void delete(Order order) throws SQLException {
+        Connect.deleteDB(order);
         ordersArrayList.remove(order);
     }
 
-    //заполнение списков данными из таблиц БД
+    //=====================READ ALL DATA FROM DB TO LISTS===============================================
     public void fillInitFromDb() throws SQLException {
         Map<String, ResultSet> mapInitialDB = Connect.readAllDB();
 
@@ -180,7 +130,6 @@ public class CollectionSklad implements Sklad {
                 } else if (tableName.equals("Product")){
                     productArrayList.add(new Product(resultSet.getInt("Id"),resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), suppliersArrayList.get(resultSet.getInt("Supplier_id")-1)));
                 }   else if (tableName.equals("Orders")){
-
                     ordersArrayList.add(new Order(resultSet.getInt("Id"), resultSet.getString("Date")));
                 }
             }
@@ -213,15 +162,41 @@ public class CollectionSklad implements Sklad {
                             order.addOrderedProductToList(new OrderedProduct(orderedProductId,product,amount));
                         }
                     }
-
-
-
                 }
             }
-
-
         }
+    }
+    //=====================================================================================================
+    public ObservableList<Product> getProductSelectedListForOrder() {
+        return productSelectedListForOrder;
+    }
 
+    public void setProductSelectedListForOrder(ObservableList<Product> productSelectedListForOrder) {
+
+        this.productSelectedListForOrder = productSelectedListForOrder;
+    }
+
+    public ObservableList<Product> getProductArrayList() {
+        return productArrayList;
+    }
+
+    public ObservableList<User> getUsersArrayList() {
+        return usersArrayList;
+    }
+
+    public ObservableList getSuppliersArrayList() {
+        return suppliersArrayList;
+    }
+
+    public ObservableList<Order> getOrdersArrayList() {
+        return ordersArrayList;
+    }
+    public ObservableList<OrderedProduct> getOrderedProductArrayList() {
+        return orderedProductArrayList;
+    }
+
+    public void setOrderedProductArrayList(ObservableList<OrderedProduct> orderedProductArrayList) {
+        this.orderedProductArrayList = orderedProductArrayList;
     }
 
 }

@@ -43,34 +43,31 @@ public class ControllerForAddProd {
     private Product product;
     private CollectionSklad collectionSklad;
 
-    ObservableList<Product> productsData = FXCollections.observableArrayList();
-    ObservableList<String> suppliersCompanyData;
-    ObservableList<Supplier> suppliersData;
-    String fioUser = "";
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
     }
 
-    public void actionClose(ActionEvent actionEvent){//НАЖАТА ОТМЕНА
+    //=====================CLICK BUTTONS===============================================
+    public void actionClose(ActionEvent actionEvent) {//НАЖАТА ОТМЕНА
         Node source = (Node) actionEvent.getSource(); //узнаем нажатый компонент
         Stage stage = (Stage) source.getScene().getWindow(); //у него узнаем сцену, у сцены - окно
         stage.hide(); //прячем окно
     }
 
     public void actionSave(ActionEvent actionEvent) throws SQLException { //нажата ОК
-            product.setName(txtName.getText());
-            product.setAmount(txtAmount.getText());
-            product.setStorage(txtStorage.getText());
-        //System.out.println("comboSupplier.getSelectionModel().getSelectedItem()"+comboSupplier.getSelectionModel().getSelectedItem());
-            product.setSupplier(comboSupplier.getSelectionModel().getSelectedItem());
-            collectionSklad.update(product); //для изменения записи в БД
-            actionClose(actionEvent);
+        product.setName(txtName.getText());
+        product.setAmount(txtAmount.getText());
+        product.setStorage(txtStorage.getText());
+        product.setSupplier(comboSupplier.getSelectionModel().getSelectedItem());
+        collectionSklad.update(product); //для изменения записи в БД
+        actionClose(actionEvent);
     }
 
-    public void setProduct(Product product){
-        if (product==null){ //добавляем новый продукт
+    //===========================================================================
+    public void setProduct(Product product) {
+        if (product == null) { //добавляем новый продукт
             product = new Product();
             this.product = product;
             txtName.setText(product.getName());
@@ -83,17 +80,16 @@ public class ControllerForAddProd {
             txtAmount.setText(product.getAmount());
             txtStorage.setText(product.getStorage());
             comboSupplier.setValue(product.getSupplier());
-            System.out.println("product.getSupplier()"+product.getSupplier());
+            System.out.println("product.getSupplier()" + product.getSupplier());
             comboSupplier.setItems(collectionSklad.getSuppliersArrayList());
-            System.out.println("collectionSklad.getSuppliersArrayList()"+collectionSklad.getSuppliersArrayList());
+            System.out.println("collectionSklad.getSuppliersArrayList()" + collectionSklad.getSuppliersArrayList());
 
         }
 
     }
 
-
     public Product getProduct() {
-        if (product.getName()==""||product.getAmount()==""||product.getStorage()==""){
+        if (product.getName() == "" || product.getAmount() == "" || product.getStorage() == "") {
             System.out.println("Нужно заполнить все поля!");
             return null;
         } else return product;
