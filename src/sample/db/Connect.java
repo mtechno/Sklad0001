@@ -15,6 +15,13 @@ import java.util.Date;
  */
 public class Connect {
     public static Connection connection;
+    //TODO Connection, Statement, ResultSet должны быть в пределах одного метода, не нужно объявлять их полями класса
+    //объявлять их нужно до конструкции try catch finally
+    //можно создать свой класс исключений, в который пробрасывать их из catch
+    //method{ Connction, RS, Statement = null
+    //try{ user.id=resultSet.readInt(1)
+    // example http://pastebin.com/U1870kfH
+    //но можно сделать один трай на метод, в финалле закрывать тоже чз трай
     public static Statement statement;
     public static ResultSet resultSet;
 

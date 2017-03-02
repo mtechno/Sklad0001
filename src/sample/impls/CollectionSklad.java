@@ -31,9 +31,17 @@ public class CollectionSklad implements Sklad {
     //=====================CRUD PRODUCT LIST and DB===============================================
     @Override
     public void create(Product product) throws SQLException {
-        Connect.writeDB(product);
-        product.setId(Connect.readIDDB(product));
-        productArrayList.add(product);
+        try {
+            Connect.writeDB(product);
+            product.setId(Connect.readIDDB(product));
+            productArrayList.add(product);
+        }
+        catch (Exception e){
+            //messageBox
+        }
+        finally {
+            //закрыть Connect
+        }
     }
 
     @Override

@@ -4,9 +4,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sample.impls.CollectionSklad;
@@ -14,6 +18,7 @@ import sample.objects.Order;
 import sample.objects.OrderedProduct;
 import sample.objects.Product;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -44,10 +49,14 @@ public class ControllerForAddOrder {
     @FXML
     private TableColumn<Product, String> amountColumnAll;
 
+    Parent parentAddOrder;
+    private FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/dlgAddAmountOrderedProduct.fxml"));
     private Order order;
     private CollectionSklad collectionSklad;
     private Stage stageDialogOrder;
+    private Stage stageDialogOrderedProduct;
     private boolean isEdit = false;
+    private CtrlAddAmountOrderedProduct ctrlAddAmountOrderedProduct;
 
     //=====================INIT WINDOW===============================================
     public void setListeners() {//слушатель при каждом показе окна
@@ -59,14 +68,27 @@ public class ControllerForAddOrder {
         });
     }
 
-    public void initOnShown() { //инициализация при каждом показе окошка
+    public void initOnShown() throws IOException { //инициализация при каждом показе окошка
         initializeTableAllProducts();
         initializeTableSelectedProducts();
+        initListeners();
+        System.out.println(parentAddOrder+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (parentAddOrder==null){
+            initLoaderAddAmount();
+        }
+
+
+    }
+    //=====================INIT LOADERS===============================================
+    private void initLoaderAddAmount() throws IOException {
+        parentAddOrder = (Parent) fxmlLoader.load();
+        ctrlAddAmountOrderedProduct = fxmlLoader.getController();
+        ctrlAddAmountOrderedProduct.setCollectionSklad(collectionSklad);
     }
 
     //=====================INIT TABLES===============================================
     private void initializeTableSelectedProducts() {
-        tableSelectedProductsAddOrder.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tableSelectedProductsAddOrder.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         nameColumnSelected.setCellValueFactory(new PropertyValueFactory<OrderedProduct, Product>("orderedProduct"));
         amountColumnSelected.setCellValueFactory(new PropertyValueFactory<OrderedProduct, String>("amount"));
         tableSelectedProductsAddOrder.setItems(order.getOrderedProductList());
@@ -78,6 +100,27 @@ public class ControllerForAddOrder {
         nameColumnAll.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
         amountColumnAll.setCellValueFactory(new PropertyValueFactory<Product, String>("amount"));
         tableAllProductsAddOrder.setItems(collectionSklad.getProductArrayList());
+    }
+
+    //=====================INIT LISTENERS===============================================
+    private void initListeners() {
+        tableSelectedProductsAddOrder.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() { //если щелкнули мышкой на таблице
+            @Override
+            public void handle(javafx.scene.input.MouseEvent mouseEvent) { //слушатель двойного нажатия на строку таблицы, вызывает диалог редактирования
+                if (mouseEvent.getClickCount() == 2 && tableSelectedProductsAddOrder.getSelectionModel().getSelectedItem() != null) {
+                    ctrlAddAmountOrderedProduct.setOrderedProduct(tableSelectedProductsAddOrder.getSelectionModel().getSelectedItem());
+                    showDlgOrderedProduct();
+                    OrderedProduct changedOP = ctrlAddAmountOrderedProduct.getOrderedProduct();
+                    for (OrderedProduct oP:
+                         order.getOrderedProductList()) {
+                        if (oP.getId()==changedOP.getId()){
+                            oP.setAmount(changedOP.getAmount());
+                            System.out.println(oP.getAmount()+" "+changedOP.getAmount());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     //=====================CLICK BUTTONS===============================================
@@ -156,6 +199,22 @@ public class ControllerForAddOrder {
     }
 
     //===============================================================================
+    public void showDlgOrderedProduct(){
+        if (stageDialogOrderedProduct == null) {
+            stageDialogOrderedProduct = new Stage();
+            stageDialogOrderedProduct.setTitle("Изменение количества товара");
+            stageDialogOrderedProduct.setResizable(false);
+            stageDialogOrderedProduct.setScene(new Scene(parentAddOrder));
+            stageDialogOrderedProduct.initModality(Modality.WINDOW_MODAL); //модальность окна
+            stageDialogOrderedProduct.initOwner(stageDialogOrder);//указали владельца окна
+            System.out.println("иниц диалога доб количества");
+//            ctrlAddAmountOrderedProduct.setSta(stageDialogOrderedProduct);
+//            ctrlAddAmountOrderedProduct.setListeners();
+        }
+//        ctrlAddAmountOrderedProduct.initOnShown();
+        stageDialogOrderedProduct.showAndWait(); //ждем закрытия диалога
+    }
+
     public void setCollectionSklad(CollectionSklad collectionSklad) {
         this.collectionSklad = collectionSklad;
         System.out.println("сет коллекцион эдд ордер");

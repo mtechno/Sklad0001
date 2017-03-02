@@ -202,7 +202,11 @@ public class Controller {
                 if (mouseEvent.getClickCount() == 2 && collectionSklad.getOrdersArrayList().size() > 0 && tableOrders.getSelectionModel().getSelectedItem() != null) {
                     controllerForAddOrder.setOrder(tableOrders.getSelectionModel().getSelectedItem());
                     controllerForAddOrder.setEdit(true);//передаем, что В режиме редактирования
-                    showDlgOrder();
+                    try {
+                        showDlgOrder();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -270,7 +274,7 @@ public class Controller {
         }
     }
 
-    public void clickBtnOrder(ActionEvent actionEvent) throws SQLException { //Показываем ОКНО Заказов
+    public void clickBtnOrder(ActionEvent actionEvent) throws SQLException, IOException { //Показываем ОКНО Заказов
         Object source = actionEvent.getSource();
         if (!(source instanceof Button)) {//если нажата не кнопка, то выходим из метода
             return;
@@ -325,7 +329,7 @@ public class Controller {
         stageDialogSup.showAndWait(); //ждем закрытия диалога
     }
 
-    private void showDlgOrder() { //Метод либо создает, либо показывает созданное ранее диалоговое окно
+    private void showDlgOrder() throws IOException { //Метод либо создает, либо показывает созданное ранее диалоговое окно
         if (stageDialogOrder == null) {
             stageDialogOrder = new Stage();
             stageDialogOrder.setTitle("Заказы");
