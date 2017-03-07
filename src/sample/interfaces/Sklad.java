@@ -1,9 +1,6 @@
 package sample.interfaces;
 
-import sample.objects.Order;
-import sample.objects.Product;
-import sample.objects.Supplier;
-import sample.objects.User;
+import sample.objects.*;
 
 import java.sql.SQLException;
 
@@ -24,6 +21,7 @@ public interface Sklad {
     void delete(Supplier supplier) throws SQLException;
 
     void create(Order order) throws SQLException;
-    void update(Order order);
+    void update(OrderedProduct orderedProduct);
     void delete(Order order) throws SQLException;
+
 }

@@ -1,7 +1,9 @@
 package sample.db;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
+import javafx.collections.ObservableList;
 import sample.objects.Order;
+import sample.objects.OrderedProduct;
 import sample.objects.Product;
 import sample.objects.Supplier;
 
@@ -71,9 +73,17 @@ public class Connect {
     }
 
     //Ordered_Products
-    public static void writeDBOrderedProducts(Product product) throws SQLException {
-        //TODO реализовать
-        Statement st = connection.createStatement();
+    public static void writeDBOrderedProductsList(Order order) throws SQLException {
+        ObservableList<OrderedProduct> orderedProductArrayList = order.getOrderedProductList();
+        int orderId = order.getOrderNumber();
+
+        for (OrderedProduct orderedProduct:orderedProductArrayList) {
+            Statement st = connection.createStatement();
+            int amount = orderedProduct.getAmount();
+            int productId = orderedProduct.getOrderedProduct().getId();
+            st.execute("INSERT INTO Ordered_Products (order_id, product_id, amount) VALUES ( '" + orderId + "' , '" + productId + "' , '" + amount + "' ); ");
+            st.close();
+        }
 
     }
 
@@ -86,8 +96,9 @@ public class Connect {
         statement.executeUpdate("update supplier set name='" + supplier.getCompany() + "',address='" + supplier.getAddress() + "',telephone='" + supplier.getPhone() + "' where id=" + supplier.getId());
     }
 
-    public static void updateDB(Order order) throws SQLException {
-        statement.executeUpdate("update orders set date='" + order.getDate() + "' where id=" + order.getOrderNumber());
+    public static void updateDB(OrderedProduct orderedProduct) throws SQLException {
+        //сначала удаляем все записи заказанных продуктов по данному ордеру, потом пишем с нуля
+        statement.executeUpdate("update ordered_products set product_id='" + orderedProduct.getOrderedProduct().getId() +"',amount='" + orderedProduct.getAmount() + "' where id=" + orderedProduct.getId());
     }
 
     //================DELETE row from DB===============
@@ -101,6 +112,12 @@ public class Connect {
 
     public static void deleteDB(Order order) throws SQLException {
         statement.executeUpdate("delete from orders where id=" + order.getOrderNumber());
+    }
+    public static void deleteDB(int orderId) throws SQLException {
+        statement.executeUpdate("delete from ordered_products where order_id=" + orderId);
+    }
+    public static void deleteDB(OrderedProduct orderedProduct, int orderId) throws SQLException {
+        statement.executeUpdate("delete from ordered_products where order_id=" + orderId + " and product_id="+orderedProduct.getOrderedProduct().getId());
     }
 
     //======Вывод из БД======================
@@ -154,7 +171,33 @@ public class Connect {
         while (rs.next()) {
             id = rs.getInt(1);
         }
+        st.close();
+        rs.close();
         return id;
+    }
+    //OrderedProducts
+    public static int readLastIdDbOrderedProducts(Order order) throws SQLException {
+        int id = 0;
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery("select id from ordered_products where rowid=last_insert_rowid()");
+        while (rs.next()) {
+            id = rs.getInt(1);
+        }
+        st.close();
+        rs.close();
+        return id;
+    }
+    public static List<Integer> readIdDbOrderedProducts(Order order) throws SQLException {
+        //берем id продуктов у определенного заказа
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery("select id from ordered_products where order_id="+order.getOrderNumber());
+        List<Integer> idList = new ArrayList<>();
+        while (rs.next()) {
+            idList.add(rs.getInt(1));
+        }
+        st.close();
+        rs.close();
+        return idList;
     }
     //======Close Connection==========================
     public static void closeDB() throws SQLException {

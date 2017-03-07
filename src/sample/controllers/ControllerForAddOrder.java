@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import sample.db.Connect;
 import sample.impls.CollectionSklad;
 import sample.objects.Order;
 import sample.objects.OrderedProduct;
@@ -72,13 +73,14 @@ public class ControllerForAddOrder {
         initializeTableAllProducts();
         initializeTableSelectedProducts();
         initListeners();
-        System.out.println(parentAddOrder+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        if (parentAddOrder==null){
+        System.out.println(parentAddOrder + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (parentAddOrder == null) {
             initLoaderAddAmount();
         }
 
 
     }
+
     //=====================INIT LOADERS===============================================
     private void initLoaderAddAmount() throws IOException {
         parentAddOrder = (Parent) fxmlLoader.load();
@@ -110,14 +112,6 @@ public class ControllerForAddOrder {
                 if (mouseEvent.getClickCount() == 2 && tableSelectedProductsAddOrder.getSelectionModel().getSelectedItem() != null) {
                     ctrlAddAmountOrderedProduct.setOrderedProduct(tableSelectedProductsAddOrder.getSelectionModel().getSelectedItem());
                     showDlgOrderedProduct();
-                    OrderedProduct changedOP = ctrlAddAmountOrderedProduct.getOrderedProduct();
-                    for (OrderedProduct oP:
-                         order.getOrderedProductList()) {
-                        if (oP.getId()==changedOP.getId()){
-                            oP.setAmount(changedOP.getAmount());
-                            System.out.println(oP.getAmount()+" "+changedOP.getAmount());
-                        }
-                    }
                 }
             }
         });
@@ -139,21 +133,24 @@ public class ControllerForAddOrder {
                     //удаляем выделенные элементы
                     for (OrderedProduct orderedProduct : tableSelectedProductsAddOrder.getSelectionModel().getSelectedItems()) {
                         order.removeOrderedProductFromList(orderedProduct);
+                        Connect.deleteDB(orderedProduct, order.getOrderNumber());
                     }
                 }
                 break;
             case "butClear"://кнопка Очистить все
+
                 if (tableSelectedProductsAddOrder.getItems() != null) {
+                    Connect.deleteDB(order.getOrderNumber()); //удалили все товары для данного заказа в БД
                     order.clearOrderedProductList();
                     System.out.println("Нажата кнопка Clear. Очищен список продуктов у заказа.");
                 }
                 break;
             case "butSelect"://кнопка Перенос выделенного в таблицу справа
+                //TODO перенести сюда запись заказанных продуктов в БД, потому что при редактировании заказа не
+                // выходит добавлять новый продукт, учитывается только смена количества существующих в заказе
                 if (tableAllProductsAddOrder.getItems() != null && tableAllProductsAddOrder.getSelectionModel().getSelectedItems() != null) {
                     //бежим по списку выделенных продуктов из таблицы слева
                     //добавляем к заказу список объектов orderedProduct
-                    //TODO после нажатия кнопки SAVE вытащить из БД id и присвоить его объекту orderedProduct
-                    //TODO реализовать изменение количества товаров
                     for (Product product : tableAllProductsAddOrder.getSelectionModel().getSelectedItems()) {
                         order.addOrderedProductToList(new OrderedProduct(1, product, 0));
                     }
@@ -177,17 +174,11 @@ public class ControllerForAddOrder {
     public void actionSave(ActionEvent actionEvent) { //нажата ОК
 
         //сохраняем в БД список
-        //TODO Реализовать запись в БД списка заказанных товаров у заказа
-
-        System.out.println(new Date(Calendar.getInstance().getTimeInMillis()).toString());
-
-        Date date = new Date();
-        Format format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        System.out.println(format.format(date));
-
-        order.setDate(format.format(date));
-//        order.setProductList(collectionSklad.getProductSelectedListForOrder());
-        collectionSklad.update(order);//для изменения записи в БД
+        if (!isEdit) {
+            Date date = new Date();
+            Format format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            order.setDate(format.format(date));
+        }
 
         Node source = (Node) actionEvent.getSource(); //узнаем нажатый компонент
         Stage stage = (Stage) source.getScene().getWindow(); //у него узнаем сцену, у сцены - окно
@@ -199,7 +190,7 @@ public class ControllerForAddOrder {
     }
 
     //===============================================================================
-    public void showDlgOrderedProduct(){
+    public void showDlgOrderedProduct() {
         if (stageDialogOrderedProduct == null) {
             stageDialogOrderedProduct = new Stage();
             stageDialogOrderedProduct.setTitle("Изменение количества товара");
@@ -208,10 +199,7 @@ public class ControllerForAddOrder {
             stageDialogOrderedProduct.initModality(Modality.WINDOW_MODAL); //модальность окна
             stageDialogOrderedProduct.initOwner(stageDialogOrder);//указали владельца окна
             System.out.println("иниц диалога доб количества");
-//            ctrlAddAmountOrderedProduct.setSta(stageDialogOrderedProduct);
-//            ctrlAddAmountOrderedProduct.setListeners();
         }
-//        ctrlAddAmountOrderedProduct.initOnShown();
         stageDialogOrderedProduct.showAndWait(); //ждем закрытия диалога
     }
 

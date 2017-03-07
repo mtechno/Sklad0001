@@ -16,6 +16,7 @@ import javafx.stage.*;
 import sample.db.Connect;
 import sample.impls.CollectionSklad;
 import sample.objects.Order;
+import sample.objects.OrderedProduct;
 import sample.objects.Product;
 import sample.objects.Supplier;
 
@@ -156,7 +157,6 @@ public class Controller {
         controllerForAddOrder.setCollectionSklad(collectionSklad);
     }
     //=====================INIT LISTENERS===============================================
-    //TODO Проверить логику работы слушателей
     private void initListeners() { //иниц СЛУШАТЕЛЕЙ с самого начала создания объекта контроллера
         collectionSklad.getProductArrayList().addListener(new ListChangeListener<Product>() {//реализация с анонимным классом
             @Override
@@ -200,12 +200,17 @@ public class Controller {
             @Override
             public void handle(javafx.scene.input.MouseEvent mouseEvent) { //слушатель двойного нажатия на строку таблицы, вызывает диалог редактирования
                 if (mouseEvent.getClickCount() == 2 && collectionSklad.getOrdersArrayList().size() > 0 && tableOrders.getSelectionModel().getSelectedItem() != null) {
-                    controllerForAddOrder.setOrder(tableOrders.getSelectionModel().getSelectedItem());
+                    Order selectedOrder = tableOrders.getSelectionModel().getSelectedItem();
+                    controllerForAddOrder.setOrder(selectedOrder); //запомнили/передали выделенную строку таблицы в контроллер
                     controllerForAddOrder.setEdit(true);//передаем, что В режиме редактирования
                     try {
-                        showDlgOrder();
+                        showDlgOrder(); //создание диалогового окна
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+
+                    for (OrderedProduct orderedProduct:selectedOrder.getOrderedProductList()){
+                        collectionSklad.update(orderedProduct);//для БД
                     }
                 }
             }
@@ -264,8 +269,6 @@ public class Controller {
                 }
                 controllerDialogSup.setSupplier(selectedSupplier); //запомнили выделенную строку таблицы
                 showDlgSup(); //создание диалогового окна
-//                tableProducts.setItems(collectionSklad.getProductArrayList());
-//                System.out.println(collectionSklad.getProductArrayList());
                 break;
             case "butDelSup"://кнопка Удалить
                 collectionSklad.delete(selectedSupplier);
@@ -297,6 +300,9 @@ public class Controller {
                 controllerForAddOrder.setOrder(selectedOrder); //запомнили/передали выделенную строку таблицы в контроллер
                 controllerForAddOrder.setEdit(true);//передаем, что В режиме редактирования
                 showDlgOrder(); //создание диалогового окна
+                for (OrderedProduct orderedProduct:selectedOrder.getOrderedProductList()){
+                    collectionSklad.update(orderedProduct);//для БД
+                }
                 break;
             case "butDelOrder"://кнопка Удалить
                 collectionSklad.delete(selectedOrder);

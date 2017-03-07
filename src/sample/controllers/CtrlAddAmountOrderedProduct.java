@@ -56,7 +56,7 @@ public class CtrlAddAmountOrderedProduct {
     public void setOrderedProduct(OrderedProduct orderedProduct) {
         this.orderedProduct = orderedProduct;
         lbNameProduct.setText(orderedProduct.getOrderedProduct().getName());
-        txtAmountProduct.setText("0");
+        txtAmountProduct.setText(""+orderedProduct.getAmount());
     }
 
 

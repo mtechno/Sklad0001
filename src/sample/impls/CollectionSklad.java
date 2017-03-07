@@ -35,11 +35,9 @@ public class CollectionSklad implements Sklad {
             Connect.writeDB(product);
             product.setId(Connect.readIDDB(product));
             productArrayList.add(product);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //messageBox
-        }
-        finally {
+        } finally {
             //закрыть Connect
         }
     }
@@ -108,12 +106,18 @@ public class CollectionSklad implements Sklad {
         Connect.writeDB(order);
         order.setOrderNumber(Connect.readIDDB(order));
         ordersArrayList.add(order);
+
+        Connect.writeDBOrderedProductsList(order); //пишем в БД список продуктов у заказа
+        for (OrderedProduct orderedProduct : order.getOrderedProductList()) {
+            //берем из БД айдишники и кидаем их в объекты
+            orderedProduct.setId(Connect.readLastIdDbOrderedProducts(order));
+        }
     }
 
     @Override
-    public void update(Order order) {
+    public void update(OrderedProduct orderedProduct) {
         try {
-            Connect.updateDB(order);
+            Connect.updateDB(orderedProduct);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,7 +125,13 @@ public class CollectionSklad implements Sklad {
 
     @Override
     public void delete(Order order) throws SQLException {
+        //удаляем заказ из БД
         Connect.deleteDB(order);
+        //удаляем все заказанные продукты по этому заказу из БД
+        if (order.getOrderedProductList().size()>0){
+            Connect.deleteDB(order.getOrderNumber());
+        }
+
         ordersArrayList.remove(order);
     }
 
@@ -129,15 +139,15 @@ public class CollectionSklad implements Sklad {
     public void fillInitFromDb() throws SQLException {
         Map<String, ResultSet> mapInitialDB = Connect.readAllDB();
 
-        for(Map.Entry<String, ResultSet> entry : mapInitialDB.entrySet()){
+        for (Map.Entry<String, ResultSet> entry : mapInitialDB.entrySet()) {
             String tableName = entry.getKey();
             ResultSet resultSet = entry.getValue();
-            while (resultSet!=null && resultSet.next()){
-                if (tableName.equals("Supplier")){
-                    suppliersArrayList.add(new Supplier(resultSet.getInt("Id"), resultSet.getString("Name"),resultSet.getString("Address"),resultSet.getString("Telephone")));
-                } else if (tableName.equals("Product")){
-                    productArrayList.add(new Product(resultSet.getInt("Id"),resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), suppliersArrayList.get(resultSet.getInt("Supplier_id")-1)));
-                }   else if (tableName.equals("Orders")){
+            while (resultSet != null && resultSet.next()) {
+                if (tableName.equals("Supplier")) {
+                    suppliersArrayList.add(new Supplier(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Address"), resultSet.getString("Telephone")));
+                } else if (tableName.equals("Product")) {
+                    productArrayList.add(new Product(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), suppliersArrayList.get(resultSet.getInt("Supplier_id") - 1)));
+                } else if (tableName.equals("Orders")) {
                     ordersArrayList.add(new Order(resultSet.getInt("Id"), resultSet.getString("Date")));
                 }
             }
@@ -145,35 +155,36 @@ public class CollectionSklad implements Sklad {
         //отдельное чтение БД Ordered_Products, тк она содержит внешние ключи на другие таблицы
         //сначала грузим выше данные из других таблиц, после эту
         Map<String, ResultSet> mapInitialDB2 = Connect.readAllDB();
-        for (Map.Entry<String, ResultSet> entry: mapInitialDB2.entrySet()){
+        for (Map.Entry<String, ResultSet> entry : mapInitialDB2.entrySet()) {
             String tableName = entry.getKey();
             ResultSet resultSet = entry.getValue();
 
-            while (resultSet!=null && resultSet.next()){
-                if (tableName.equals("Ordered_Products")){
+            while (resultSet != null && resultSet.next()) {
+                if (tableName.equals("Ordered_Products")) {
                     int orderedProductId = resultSet.getInt("id");
                     int orderId = resultSet.getInt("order_id");
                     int idProduct = resultSet.getInt("product_id");
                     int amount = resultSet.getInt("amount");
                     Product product = new Product();
-                    System.out.println(orderedProductId+" "+orderId+" "+idProduct+" "+amount);
-                    for (Product prod: productArrayList){
-                        if (prod.getId()==idProduct){
+                    System.out.println(orderedProductId + " " + orderId + " " + idProduct + " " + amount);
+                    for (Product prod : productArrayList) {
+                        if (prod.getId() == idProduct) {
                             product = prod;
                             System.out.println(product);
                         }
                     }
 
-                    for (Order order: ordersArrayList){
+                    for (Order order : ordersArrayList) {
                         System.out.println(order.getOrderNumber());
-                        if (order.getOrderNumber()==orderId){
-                            order.addOrderedProductToList(new OrderedProduct(orderedProductId,product,amount));
+                        if (order.getOrderNumber() == orderId) {
+                            order.addOrderedProductToList(new OrderedProduct(orderedProductId, product, amount));
                         }
                     }
                 }
             }
         }
     }
+
     //=====================================================================================================
     public ObservableList<Product> getProductSelectedListForOrder() {
         return productSelectedListForOrder;
@@ -199,6 +210,7 @@ public class CollectionSklad implements Sklad {
     public ObservableList<Order> getOrdersArrayList() {
         return ordersArrayList;
     }
+
     public ObservableList<OrderedProduct> getOrderedProductArrayList() {
         return orderedProductArrayList;
     }
