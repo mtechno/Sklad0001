@@ -116,11 +116,6 @@ public class CollectionSklad implements Sklad {
 
     @Override
     public void update(OrderedProduct orderedProduct) {
-        try {
-            Connect.updateDB(orderedProduct);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -146,7 +141,14 @@ public class CollectionSklad implements Sklad {
                 if (tableName.equals("Supplier")) {
                     suppliersArrayList.add(new Supplier(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Address"), resultSet.getString("Telephone")));
                 } else if (tableName.equals("Product")) {
-                    productArrayList.add(new Product(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), suppliersArrayList.get(resultSet.getInt("Supplier_id") - 1)));
+                    //сначала ищем совпадение id из БД и id из списка поставщиков, потом уже добавляем новый продукт с
+                    // этим поставщиком
+                    int supIdDb = resultSet.getInt("supplier_id");
+                    for (Supplier supplier: suppliersArrayList){
+                        if (supplier.getId()==supIdDb){
+                            productArrayList.add(new Product(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), supplier));
+                        }
+                    }
                 } else if (tableName.equals("Orders")) {
                     ordersArrayList.add(new Order(resultSet.getInt("Id"), resultSet.getString("Date")));
                 }

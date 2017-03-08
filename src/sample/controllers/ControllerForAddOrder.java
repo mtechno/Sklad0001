@@ -148,7 +148,7 @@ public class ControllerForAddOrder {
             case "butSelect"://кнопка Перенос выделенного в таблицу справа
                 //TODO перенести сюда запись заказанных продуктов в БД, потому что при редактировании заказа не
                 // выходит добавлять новый продукт, учитывается только смена количества существующих в заказе
-                if (tableAllProductsAddOrder.getItems() != null && tableAllProductsAddOrder.getSelectionModel().getSelectedItems() != null) {
+                if (tableAllProductsAddOrder.getItems().size() > 0 && tableAllProductsAddOrder.getSelectionModel().getSelectedItems().size() > 0) {
                     //бежим по списку выделенных продуктов из таблицы слева
                     //добавляем к заказу список объектов orderedProduct
                     for (Product product : tableAllProductsAddOrder.getSelectionModel().getSelectedItems()) {
@@ -157,6 +157,11 @@ public class ControllerForAddOrder {
                     //отображаем список в таблице справа
                     tableSelectedProductsAddOrder.setItems(order.getOrderedProductList());
 
+//                    Connect.writeDBOrderedProductsList(order); //пишем в БД список продуктов у заказа
+//                    for (OrderedProduct orderedProduct : order.getOrderedProductList()) {
+//                        //берем из БД айдишники и кидаем их в объекты
+//                        orderedProduct.setId(Connect.readLastIdDbOrderedProducts(order));
+//                    }
                     System.out.println("Нажата кнопка Select. У заказа список продуктов=" + order.getOrderedProductList());
                 }
                 break;
@@ -166,27 +171,21 @@ public class ControllerForAddOrder {
     public void actionClose(ActionEvent actionEvent) {//НАЖАТА ОТМЕНА
         Node source = (Node) actionEvent.getSource(); //узнаем нажатый компонент
         Stage stage = (Stage) source.getScene().getWindow(); //у него узнаем сцену, у сцены - окно
-        order = null;
         collectionSklad.deleteProductSelectedListForOrder();//удалили из списка выбранные элементы.
         stage.hide(); //прячем окно
     }
 
     public void actionSave(ActionEvent actionEvent) { //нажата ОК
-
-        //сохраняем в БД список
-        if (!isEdit) {
-            Date date = new Date();
-            Format format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            order.setDate(format.format(date));
+        if (tableSelectedProductsAddOrder.getItems().size() == 0) {
+            System.out.println("Нужно добавить товары к заказу!");
+        } else {
+            if (!isEdit) {
+                Date date = new Date();
+                Format format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                order.setDate(format.format(date));
+            }
+            actionClose(actionEvent);
         }
-
-        Node source = (Node) actionEvent.getSource(); //узнаем нажатый компонент
-        Stage stage = (Stage) source.getScene().getWindow(); //у него узнаем сцену, у сцены - окно
-        stage.hide(); //прячем окно
-        if (tableSelectedProductsAddOrder != null) {
-            collectionSklad.deleteProductSelectedListForOrder();//удалили из списка выбранные элементы.
-        }
-
     }
 
     //===============================================================================

@@ -39,11 +39,16 @@ public class ControllerForAddSup {
     }
 
     public void actionSave(ActionEvent actionEvent) { //нажата ОК
-        supplier.setCompany(txtCompany.getText());
-        supplier.setAddress(txtAddress.getText());
-        supplier.setPhone(txtPhone.getText());
-        collectionSklad.update(supplier);//для изменения записи в БД
-        actionClose(actionEvent);
+        if (txtCompany.getText().length()<=1 || txtAddress.getText().length()<=1 || txtPhone.getText().length()<=1) {
+            System.out.println("Нужно заполнить все поля!");
+        } else {
+            supplier.setCompany(txtCompany.getText());
+            supplier.setAddress(txtAddress.getText());
+            supplier.setPhone(txtPhone.getText());
+            collectionSklad.update(supplier);//для изменения записи в БД
+            actionClose(actionEvent);
+        }
+
     }
 
     //=========================================================================
@@ -63,10 +68,7 @@ public class ControllerForAddSup {
 
 
     public Supplier getSupplier() {
-        if (supplier.getCompany() == "" || supplier.getAddress() == "" || supplier.getPhone() == "") {
-            System.out.println("Нужно заполнить все поля!");
-            return null;
-        } else return supplier;
+        return supplier;
     }
 
     public void setCollectionSklad(CollectionSklad collectionSklad) {

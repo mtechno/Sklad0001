@@ -203,14 +203,20 @@ public class Controller {
                     Order selectedOrder = tableOrders.getSelectionModel().getSelectedItem();
                     controllerForAddOrder.setOrder(selectedOrder); //запомнили/передали выделенную строку таблицы в контроллер
                     controllerForAddOrder.setEdit(true);//передаем, что В режиме редактирования
-                    try {
-                        showDlgOrder(); //создание диалогового окна
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
-                    for (OrderedProduct orderedProduct:selectedOrder.getOrderedProductList()){
-                        collectionSklad.update(orderedProduct);//для БД
+                    try {
+                        showDlgOrder();
+                        //сначала удаляем все продукты у заказа, а после добавляем их снова всем скопом
+                        Connect.deleteDB(selectedOrder.getOrderNumber());
+                        Connect.writeDBOrderedProductsList(selectedOrder); //пишем в БД список продуктов у заказа
+                        for (OrderedProduct orderedProduct : selectedOrder.getOrderedProductList()) {
+                            //берем из БД айдишники и кидаем их в объекты
+                            orderedProduct.setId(Connect.readLastIdDbOrderedProducts(selectedOrder));
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e){
+                        e.printStackTrace();
                     }
                 }
             }
@@ -299,9 +305,20 @@ public class Controller {
                 }
                 controllerForAddOrder.setOrder(selectedOrder); //запомнили/передали выделенную строку таблицы в контроллер
                 controllerForAddOrder.setEdit(true);//передаем, что В режиме редактирования
-                showDlgOrder(); //создание диалогового окна
-                for (OrderedProduct orderedProduct:selectedOrder.getOrderedProductList()){
-                    collectionSklad.update(orderedProduct);//для БД
+                try {
+                    showDlgOrder();
+                    //сначала удаляем все продукты у заказа, а после добавляем их снова всем скопом
+                    //TODO при новом добавлении изменяется id ordered_product, тк БД присваивает им новый!
+                    Connect.deleteDB(selectedOrder.getOrderNumber());
+                    Connect.writeDBOrderedProductsList(selectedOrder); //пишем в БД список продуктов у заказа
+                    for (OrderedProduct orderedProduct : selectedOrder.getOrderedProductList()) {
+                        //берем из БД айдишники и кидаем их в объекты
+                        orderedProduct.setId(Connect.readLastIdDbOrderedProducts(selectedOrder));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (IOException e){
+                    e.printStackTrace();
                 }
                 break;
             case "butDelOrder"://кнопка Удалить

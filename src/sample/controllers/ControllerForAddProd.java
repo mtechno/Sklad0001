@@ -57,12 +57,17 @@ public class ControllerForAddProd {
     }
 
     public void actionSave(ActionEvent actionEvent) throws SQLException { //нажата ОК
-        product.setName(txtName.getText());
-        product.setAmount(txtAmount.getText());
-        product.setStorage(txtStorage.getText());
-        product.setSupplier(comboSupplier.getSelectionModel().getSelectedItem());
-        collectionSklad.update(product); //для изменения записи в БД
-        actionClose(actionEvent);
+        if (txtName.getText().length() <= 1 || txtAmount.getText().length() == 0 || txtStorage.getText().length() ==
+                0 || comboSupplier.getSelectionModel().getSelectedItem()==null) {
+            System.out.println("Нужно заполнить все поля!");
+        } else {
+            product.setName(txtName.getText());
+            product.setAmount(txtAmount.getText());
+            product.setStorage(txtStorage.getText());
+            product.setSupplier(comboSupplier.getSelectionModel().getSelectedItem());
+            collectionSklad.update(product); //для изменения записи в БД
+            actionClose(actionEvent);
+        }
     }
 
     //===========================================================================

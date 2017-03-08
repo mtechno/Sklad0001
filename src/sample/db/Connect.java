@@ -96,10 +96,11 @@ public class Connect {
         statement.executeUpdate("update supplier set name='" + supplier.getCompany() + "',address='" + supplier.getAddress() + "',telephone='" + supplier.getPhone() + "' where id=" + supplier.getId());
     }
 
-    public static void updateDB(OrderedProduct orderedProduct) throws SQLException {
-        //сначала удаляем все записи заказанных продуктов по данному ордеру, потом пишем с нуля
-        statement.executeUpdate("update ordered_products set product_id='" + orderedProduct.getOrderedProduct().getId() +"',amount='" + orderedProduct.getAmount() + "' where id=" + orderedProduct.getId());
-    }
+//    public static void updateDB(OrderedProduct orderedProduct) throws SQLException {
+//        //сначала удаляем все записи заказанных продуктов по данному ордеру, потом пишем с нуля
+//        statement.execute("delete from ordered_products where order_id=" + orderId + " and product_id="+orderedProduct.getOrderedProduct().getId());
+//        statement.executeUpdate("update ordered_products set product_id='" + orderedProduct.getOrderedProduct().getId() +"',amount='" + orderedProduct.getAmount() + "' where id=" + orderedProduct.getId());
+//    }
 
     //================DELETE row from DB===============
     public static void deleteDB(Product product) throws SQLException {
@@ -114,6 +115,7 @@ public class Connect {
         statement.executeUpdate("delete from orders where id=" + order.getOrderNumber());
     }
     public static void deleteDB(int orderId) throws SQLException {
+        //remove all ordered_products for this order
         statement.executeUpdate("delete from ordered_products where order_id=" + orderId);
     }
     public static void deleteDB(OrderedProduct orderedProduct, int orderId) throws SQLException {
