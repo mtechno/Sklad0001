@@ -24,7 +24,7 @@ public class ControllerForAddSup {
 
     private Supplier supplier;
     private CollectionSklad collectionSklad;
-
+    private boolean isEdit = false;
 
     @FXML
     public void initialize() {
@@ -45,7 +45,9 @@ public class ControllerForAddSup {
             supplier.setCompany(txtCompany.getText());
             supplier.setAddress(txtAddress.getText());
             supplier.setPhone(txtPhone.getText());
-            collectionSklad.update(supplier);//для изменения записи в БД
+            if (isEdit){
+                collectionSklad.update(supplier);//для изменения записи в БД
+            }
             actionClose(actionEvent);
         }
 
@@ -76,4 +78,11 @@ public class ControllerForAddSup {
         System.out.println("сет коллекцион");
     }
 
+    public boolean isEdit() {
+        return isEdit;
+    }
+
+    public void setEdit(boolean edit) {
+        isEdit = edit;
+    }
 }

@@ -24,17 +24,6 @@ public class ControllerForAddProd {
     TextField txtName;
     @FXML
     TextField txtAmount;
-
-    public void setCollectionSklad(CollectionSklad collectionSklad) {
-        this.collectionSklad = collectionSklad;
-        System.out.println("сет коллекцион");
-    }
-
-    public CollectionSklad getCollectionSklad() {
-
-        return collectionSklad;
-    }
-
     @FXML
     TextField txtStorage;
     @FXML
@@ -42,6 +31,7 @@ public class ControllerForAddProd {
 
     private Product product;
     private CollectionSklad collectionSklad;
+    private boolean isEdit = false;
 
 
     @FXML
@@ -65,7 +55,9 @@ public class ControllerForAddProd {
             product.setAmount(txtAmount.getText());
             product.setStorage(txtStorage.getText());
             product.setSupplier(comboSupplier.getSelectionModel().getSelectedItem());
-            collectionSklad.update(product); //для изменения записи в БД
+            if (isEdit){
+                collectionSklad.update(product); //для изменения записи в БД
+            }
             actionClose(actionEvent);
         }
     }
@@ -99,4 +91,23 @@ public class ControllerForAddProd {
             return null;
         } else return product;
     }
+
+    public void setCollectionSklad(CollectionSklad collectionSklad) {
+        this.collectionSklad = collectionSklad;
+        System.out.println("сет коллекцион");
+    }
+
+    public CollectionSklad getCollectionSklad() {
+
+        return collectionSklad;
+    }
+
+    public boolean isEdit() {
+        return isEdit;
+    }
+
+    public void setEdit(boolean edit) {
+        isEdit = edit;
+    }
+
 }

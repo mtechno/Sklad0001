@@ -18,6 +18,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 
 public class CtrlAddAmountOrderedProduct {
@@ -36,7 +37,6 @@ public class CtrlAddAmountOrderedProduct {
 
     @FXML
     public void initialize() {
-
     }
 
     //=====================CLICK BUTTONS===============================================

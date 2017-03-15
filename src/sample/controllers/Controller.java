@@ -156,6 +156,7 @@ public class Controller {
         controllerForAddOrder = fxmlLoaderOrder.getController();
         controllerForAddOrder.setCollectionSklad(collectionSklad);
     }
+
     //=====================INIT LISTENERS===============================================
     private void initListeners() { //иниц СЛУШАТЕЛЕЙ с самого начала создания объекта контроллера
         collectionSklad.getProductArrayList().addListener(new ListChangeListener<Product>() {//реализация с анонимным классом
@@ -181,6 +182,7 @@ public class Controller {
             @Override
             public void handle(javafx.scene.input.MouseEvent mouseEvent) { //слушатель двойного нажатия на строку таблицы, вызывает диалог редактирования
                 if (mouseEvent.getClickCount() == 2 && collectionSklad.getProductArrayList().size() > 0 && tableProducts.getSelectionModel().getSelectedItem() != null) {
+                    controllerDialog.setEdit(true);
                     controllerDialog.setProduct(tableProducts.getSelectionModel().getSelectedItem());
                     showDlgProd();
                 }
@@ -191,6 +193,7 @@ public class Controller {
             @Override
             public void handle(javafx.scene.input.MouseEvent mouseEvent) {//слушатель двойного нажатия на строку таблицы, вызывает диалог редактирования
                 if (mouseEvent.getClickCount() == 2 && collectionSklad.getSuppliersArrayList().size() > 0 && tableSuppliers.getSelectionModel().getSelectedItem() != null) {
+                    controllerDialogSup.setEdit(true);
                     controllerDialogSup.setSupplier(tableSuppliers.getSelectionModel().getSelectedItem());
                     showDlgSup();
                 }
@@ -215,13 +218,14 @@ public class Controller {
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
-                    } catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
     }
+
     //=====================CLICK BUTTONS===============================================
     public void clickBtn(javafx.event.ActionEvent actionEvent) throws SQLException { //СОЗДАЕМ ДИАЛОГОВОЕ ОКНО ПРОДУКТОВ
         Object source = actionEvent.getSource();
@@ -234,6 +238,7 @@ public class Controller {
         switch (clickedButton.getId()) {
             case "butAddProd"://кнопка Добавить
                 controllerDialog.setProduct(null);//передаем в контроллер диалОкна новый объект продукта
+                controllerDialog.setEdit(false);
                 showDlgProd();
                 if (controllerDialog.getProduct() != null) {//если не заполнили одно из полей
                     collectionSklad.create(controllerDialog.getProduct());//получаем объект и добавляем в коллекцию
@@ -243,6 +248,7 @@ public class Controller {
                 if (collectionSklad.getProductArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
                     return;
                 }
+                controllerDialog.setEdit(true);
                 controllerDialog.setProduct(selectedProduct); //запомнили выделенную строку таблицы
                 showDlgProd(); //создание диалогового окна
                 break;
@@ -263,6 +269,7 @@ public class Controller {
 
         switch (clickedButton.getId()) {
             case "butAddSup"://кнопка Добавить
+                controllerDialogSup.setEdit(false);
                 controllerDialogSup.setSupplier(null);//передаем в контроллер диалОкна новый объект поставщика
                 showDlgSup();
                 if (controllerDialogSup.getSupplier() != null) {//если не заполнили одно из полей
@@ -273,6 +280,7 @@ public class Controller {
                 if (collectionSklad.getSuppliersArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
                     return;
                 }
+                controllerDialogSup.setEdit(true);
                 controllerDialogSup.setSupplier(selectedSupplier); //запомнили выделенную строку таблицы
                 showDlgSup(); //создание диалогового окна
                 break;
@@ -317,7 +325,7 @@ public class Controller {
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -379,6 +387,7 @@ public class Controller {
         System.out.println(collectionSklad.getProductArrayList().toString());
         //initializeTable();
     }
+
     private void updatelabelCountProducts() {
         labelCountProducts.setText("Количество записей товаров: " + collectionSklad.getProductArrayList().size());
     }

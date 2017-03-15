@@ -24,16 +24,17 @@ public class Connect {
     //try{ user.id=resultSet.readInt(1)
     // example http://pastebin.com/U1870kfH
     //но можно сделать один трай на метод, в финалле закрывать тоже чз трай
-    public static Statement statement;
-    public static ResultSet resultSet;
+//    public static Statement statement;
+//    public static ResultSet resultSet;
 
     //===== ПОКДЛЮЧЕНИЕ К БД ===========
     public static void conn() throws ClassNotFoundException, SQLException {
         connection = null;
-        System.out.println(Class.forName("org.sqlite.JDBC"));
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:sklad_pilot.db");
-        statement = connection.createStatement();
+        Statement statement = connection.createStatement();
+        statement.execute("PRAGMA foreign_keys = ON");
+        statement.close();
         System.out.println("БД подкоючена");
     }
 
@@ -52,6 +53,9 @@ public class Connect {
         }
 
         st.execute("INSERT INTO Product (Name, Amount, Supplier_id, Storage) VALUES ( '" + name + "' , '" + amount + "' , '" + supplier_id + "' , '" + storage + "' ); ");
+
+        st.close();
+        rs.close();
     }
 
     //Supplier
@@ -61,7 +65,10 @@ public class Connect {
         String telephone = supplier.getPhone();
 
         Statement st = connection.createStatement();
+
         st.execute("INSERT INTO Supplier (Name, Address, Telephone) VALUES ( '" + name + "' , '" + address + "' , '" + telephone + "' ); ");
+
+        st.close();
     }
 
     //Orders
@@ -70,6 +77,8 @@ public class Connect {
 
         Statement st = connection.createStatement();
         st.execute("INSERT INTO Orders (Date) VALUES ( '" + orderDate + "' ); ");
+
+        st.close();
     }
 
     //Ordered_Products
@@ -89,37 +98,47 @@ public class Connect {
 
     //=================UPDATE DB=======================
     public static void updateDB(Product product) throws SQLException {
+        System.out.println("update prod");
+        Statement statement = connection.createStatement();
         statement.executeUpdate("update product set name='" + product.getName() + "',amount='" + product.getAmount() + "',supplier_id='" + product.getSupplier().getId() + "',storage=" + product.getStorage() + " where id=" + product.getId());
+        statement.close();
     }
 
     public static void updateDB(Supplier supplier) throws SQLException {
+        System.out.println("update suppl");
+        Statement statement = connection.createStatement();
         statement.executeUpdate("update supplier set name='" + supplier.getCompany() + "',address='" + supplier.getAddress() + "',telephone='" + supplier.getPhone() + "' where id=" + supplier.getId());
+        statement.close();
     }
-
-//    public static void updateDB(OrderedProduct orderedProduct) throws SQLException {
-//        //сначала удаляем все записи заказанных продуктов по данному ордеру, потом пишем с нуля
-//        statement.execute("delete from ordered_products where order_id=" + orderId + " and product_id="+orderedProduct.getOrderedProduct().getId());
-//        statement.executeUpdate("update ordered_products set product_id='" + orderedProduct.getOrderedProduct().getId() +"',amount='" + orderedProduct.getAmount() + "' where id=" + orderedProduct.getId());
-//    }
 
     //================DELETE row from DB===============
     public static void deleteDB(Product product) throws SQLException {
+        Statement statement = connection.createStatement();
         statement.executeUpdate("delete from product where id=" + product.getId());
+        statement.close();
     }
 
     public static void deleteDB(Supplier supplier) throws SQLException {
+        Statement statement = connection.createStatement();
         statement.executeUpdate("delete from supplier where id=" + supplier.getId());
+        statement.close();
     }
 
     public static void deleteDB(Order order) throws SQLException {
+        Statement statement = connection.createStatement();
         statement.executeUpdate("delete from orders where id=" + order.getOrderNumber());
+        statement.close();
     }
     public static void deleteDB(int orderId) throws SQLException {
         //remove all ordered_products for this order
+        Statement statement = connection.createStatement();
         statement.executeUpdate("delete from ordered_products where order_id=" + orderId);
+        statement.close();
     }
     public static void deleteDB(OrderedProduct orderedProduct, int orderId) throws SQLException {
+        Statement statement = connection.createStatement();
         statement.executeUpdate("delete from ordered_products where order_id=" + orderId + " and product_id="+orderedProduct.getOrderedProduct().getId());
+        statement.close();
     }
 
     //======Вывод из БД======================
@@ -151,6 +170,8 @@ public class Connect {
         while (rs.next()) {
             id = rs.getInt(1);
         }
+        st.close();
+        rs.close();
         return id;
     }
 
@@ -162,6 +183,8 @@ public class Connect {
         while (rs.next()) {
             id = rs.getInt(1);
         }
+        st.close();
+        rs.close();
         return id;
     }
 
@@ -204,7 +227,5 @@ public class Connect {
     //======Close Connection==========================
     public static void closeDB() throws SQLException {
         connection.close();
-        statement.close();
-        resultSet.close();
     }
 }
