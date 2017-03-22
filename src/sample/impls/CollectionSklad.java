@@ -121,11 +121,21 @@ public class CollectionSklad implements Sklad {
         //удаляем заказ из БД
         Connect.deleteDB(order);
         //удаляем все заказанные продукты по этому заказу из БД
-        if (order.getOrderedProductList().size()>0){
+        if (order.getOrderedProductList().size() > 0) {
             Connect.deleteDB(order.getOrderNumber());
         }
 
         ordersArrayList.remove(order);
+    }
+
+    //=====================CLEAR ALL DATA LISTS===============================================
+    public void clearLists() {
+        productArrayList.clear();
+        usersArrayList.clear();
+        suppliersArrayList.clear();
+        ordersArrayList.clear();
+        orderedProductArrayList.clear();
+        productSelectedListForOrder.clear();
     }
 
     //=====================READ ALL DATA FROM DB TO LISTS===============================================
@@ -142,8 +152,8 @@ public class CollectionSklad implements Sklad {
                     //сначала ищем совпадение id из БД и id из списка поставщиков, потом уже добавляем новый продукт с
                     // этим поставщиком
                     int supIdDb = resultSet.getInt("supplier_id");
-                    for (Supplier supplier: suppliersArrayList){
-                        if (supplier.getId()==supIdDb){
+                    for (Supplier supplier : suppliersArrayList) {
+                        if (supplier.getId() == supIdDb) {
                             productArrayList.add(new Product(resultSet.getInt("Id"), resultSet.getString("Name"), resultSet.getString("Amount"), resultSet.getString("Storage"), supplier));
                         }
                     }

@@ -12,165 +12,156 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controllers.Controller">
-   <top>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <MenuBar>
-              <menus>
-                <Menu mnemonicParsing="false" text="Склад">
-                  <items>
-                    <MenuItem fx:id="menuAllProducts" mnemonicParsing="false" onAction="#menuAllProductsSelect" text="Товары в наличии" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Редактирование">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Создать" />
-                        <MenuItem mnemonicParsing="false" text="Изменить" />
-                        <MenuItem mnemonicParsing="false" text="Удалить" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Помощь">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="О программе" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-            <HBox spacing="8.0">
-               <children>
-                  <TextField fx:id="logTextField">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </TextField>
-                  <Button fx:id="but1" mnemonicParsing="false" onAction="#clickLogIn" text="Ok" />
-                  <Separator orientation="VERTICAL" />
-                  <Label text="Товар">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Button fx:id="butAddProd" mnemonicParsing="false" onAction="#clickBtn" text="+">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#21f83a" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Button fx:id="butUpProd" mnemonicParsing="false" onAction="#clickBtn" text="P">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Button fx:id="butDelProd" mnemonicParsing="false" onAction="#clickBtn" text="X">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1e1e" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Separator orientation="VERTICAL" />
-                  <Label text="Поставщик">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Label>
-                  <Button fx:id="butAddSup" mnemonicParsing="false" onAction="#clickBtnSup" text="+">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1fff2c" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Button fx:id="butUpSup" mnemonicParsing="false" onAction="#clickBtnSup" text="P">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Button fx:id="butDelSup" mnemonicParsing="false" onAction="#clickBtnSup" text="X">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic></Button>
-                  <Separator orientation="VERTICAL" />
-                  <Label text="Заказ" />
-                  <Button fx:id="butAddOrder" mnemonicParsing="false" onAction="#clickBtnOrder" text="+">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#20ff1f" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="butUpOrder" mnemonicParsing="false" onAction="#clickBtnOrder" text="P">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="butDelOrder" mnemonicParsing="false" onAction="#clickBtnOrder" text="X">
-                     <graphic>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="10.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
-                     </graphic>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </padding>
-            </HBox>
-         </children>
-      </VBox>
-   </top>
-   <bottom>
-      <HBox spacing="20.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="labelWelcome" />
-            <Label fx:id="labelCountProducts" text="Количество записей: 0" />
-         </children>
-      </HBox>
-   </bottom>
-   <left>
-      <TabPane prefHeight="524.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab text="Товары">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="tableProducts" prefHeight="496.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columns>
-                            <TableColumn fx:id="idColumn" prefWidth="51.0" text="ID" />
-                            <TableColumn fx:id="nameColumn" prefWidth="242.0" text="Наименование" />
-                              <TableColumn fx:id="amountColumn" prefWidth="38.0" text="Количество" />
-                              <TableColumn fx:id="supplierColumn" prefWidth="413.0" text="Поставщик" />
-                              <TableColumn fx:id="storageColumn" prefWidth="55.0" text="Место хранения" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Поставщики">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="tableSuppliers" prefHeight="496.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <columns>
-                              <TableColumn fx:id="idColumnS" prefWidth="51.0" text="ID" />
-                              <TableColumn fx:id="nameColumnS" prefWidth="242.0" text="Наименование" />
-                              <TableColumn fx:id="addressColumnS" prefWidth="344.0" text="Адрес" />
-                              <TableColumn fx:id="telColumnS" prefWidth="162.0" text="Телефон" />
-                           </columns>
-                        </TableView>
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Заказы">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="tableOrders" prefHeight="496.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columns>
-                            <TableColumn fx:id="idColumnO" prefWidth="75.0" text="id" />
-                              <TableColumn fx:id="dateColumnO" prefWidth="337.0" text="Дата" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.controllers.Controller">
+    <top>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <MenuBar>
+                    <menus>
+                        <Menu mnemonicParsing="false" text="Склад">
+                            <items>
+                                <MenuItem fx:id="menuAllProducts" mnemonicParsing="false"
+                                          onAction="#menuAllProductsSelect" text="Товары в наличии"/>
+                                <MenuItem mnemonicParsing="false" text="Close"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Редактирование">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Создать"/>
+                                <MenuItem mnemonicParsing="false" text="Изменить"/>
+                                <MenuItem mnemonicParsing="false" text="Удалить"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Помощь">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="О программе"/>
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <HBox spacing="8.0">
+                    <children>
+                        <TextField fx:id="logTextField">
+                            <HBox.margin>
+                                <Insets/>
+                            </HBox.margin>
+                        </TextField>
+                        <Button fx:id="but1" mnemonicParsing="false" onAction="#clickLogIn" text="Ok"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Button fx:id="butAddProd" mnemonicParsing="false" onAction="#clickBtn" text="New">
+                            <graphic>
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#21f83a" height="10.0" stroke="BLACK"
+                                           strokeType="INSIDE" width="10.0"/>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="butUpProd" mnemonicParsing="false" onAction="#clickBtn" text="Edit">
+                            <graphic>
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="10.0" stroke="BLACK"
+                                           strokeType="INSIDE" width="10.0"/>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="butDelProd" mnemonicParsing="false" onAction="#clickBtn" text="Delete">
+                            <graphic>
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff1e1e" height="10.0" stroke="BLACK"
+                                           strokeType="INSIDE" width="10.0"/>
+                            </graphic>
+                        </Button>
+                        <Separator layoutX="198.0" layoutY="18.0" orientation="VERTICAL"/>
+                        <Button mnemonicParsing="false" onAction="#clickBtnRefresh">
+                            <graphic>
+                                <ImageView fitHeight="12.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../images/refresh.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+    <bottom>
+        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="labelWelcome"/>
+                <Label fx:id="labelCountProducts" text="Количество Товаров: 0"/>
+                <Label fx:id="labelCountSuppliers" text="Количество Поставщиков: 0"/>
+                <Label fx:id="labelCountOrders" text="Количество Заказов: 0"/>
+            </children>
+        </HBox>
+    </bottom>
+    <left>
+        <TabPane fx:id="tabPane" prefHeight="524.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE"
+                 BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab fx:id="tabProducts" text="Товары">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TableView fx:id="tableProducts" prefHeight="496.0" prefWidth="800.0"
+                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columns>
+                                        <TableColumn fx:id="idColumn" prefWidth="51.0" text="ID"/>
+                                        <TableColumn fx:id="nameColumn" prefWidth="242.0" text="Наименование"/>
+                                        <TableColumn fx:id="amountColumn" prefWidth="38.0" text="Количество"/>
+                                        <TableColumn fx:id="supplierColumn" prefWidth="413.0" text="Поставщик"/>
+                                        <TableColumn fx:id="storageColumn" prefWidth="55.0" text="Место хранения"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Поставщики">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TableView fx:id="tableSuppliers" prefHeight="496.0" prefWidth="800.0"
+                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columns>
+                                        <TableColumn fx:id="idColumnS" prefWidth="51.0" text="ID"/>
+                                        <TableColumn fx:id="nameColumnS" prefWidth="242.0" text="Наименование"/>
+                                        <TableColumn fx:id="addressColumnS" prefWidth="344.0" text="Адрес"/>
+                                        <TableColumn fx:id="telColumnS" prefWidth="162.0" text="Телефон"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Заказы">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TableView fx:id="tableOrders" prefHeight="496.0" prefWidth="800.0"
+                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columns>
+                                        <TableColumn fx:id="idColumnO" prefWidth="75.0" text="id"/>
+                                        <TableColumn fx:id="dateColumnO" prefWidth="337.0" text="Дата"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </left>
 </BorderPane>

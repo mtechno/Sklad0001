@@ -86,7 +86,7 @@ public class Connect {
         ObservableList<OrderedProduct> orderedProductArrayList = order.getOrderedProductList();
         int orderId = order.getOrderNumber();
 
-        for (OrderedProduct orderedProduct:orderedProductArrayList) {
+        for (OrderedProduct orderedProduct : orderedProductArrayList) {
             Statement st = connection.createStatement();
             int amount = orderedProduct.getAmount();
             int productId = orderedProduct.getOrderedProduct().getId();
@@ -129,15 +129,17 @@ public class Connect {
         statement.executeUpdate("delete from orders where id=" + order.getOrderNumber());
         statement.close();
     }
+
     public static void deleteDB(int orderId) throws SQLException {
         //remove all ordered_products for this order
         Statement statement = connection.createStatement();
         statement.executeUpdate("delete from ordered_products where order_id=" + orderId);
         statement.close();
     }
+
     public static void deleteDB(OrderedProduct orderedProduct, int orderId) throws SQLException {
         Statement statement = connection.createStatement();
-        statement.executeUpdate("delete from ordered_products where order_id=" + orderId + " and product_id="+orderedProduct.getOrderedProduct().getId());
+        statement.executeUpdate("delete from ordered_products where order_id=" + orderId + " and product_id=" + orderedProduct.getOrderedProduct().getId());
         statement.close();
     }
 
@@ -200,6 +202,7 @@ public class Connect {
         rs.close();
         return id;
     }
+
     //OrderedProducts
     public static int readLastIdDbOrderedProducts(Order order) throws SQLException {
         int id = 0;
@@ -210,12 +213,14 @@ public class Connect {
         }
         st.close();
         rs.close();
+        System.out.println();
         return id;
     }
+
     public static List<Integer> readIdDbOrderedProducts(Order order) throws SQLException {
         //берем id продуктов у определенного заказа
         Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery("select id from ordered_products where order_id="+order.getOrderNumber());
+        ResultSet rs = st.executeQuery("select id from ordered_products where order_id=" + order.getOrderNumber());
         List<Integer> idList = new ArrayList<>();
         while (rs.next()) {
             idList.add(rs.getInt(1));
@@ -224,6 +229,7 @@ public class Connect {
         rs.close();
         return idList;
     }
+
     //======Close Connection==========================
     public static void closeDB() throws SQLException {
         connection.close();

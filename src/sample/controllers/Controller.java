@@ -1,5 +1,6 @@
 package sample.controllers;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -75,6 +76,15 @@ public class Controller {
     Button butDelProd;
     @FXML
     Label labelCountProducts;
+    @FXML
+    Label labelCountSuppliers;
+    @FXML
+    Label labelCountOrders;
+    @FXML
+    TabPane tabPane;
+    @FXML
+    Tab tabProducts;
+
 
     String fioUser = "";
 
@@ -127,6 +137,7 @@ public class Controller {
         idColumnO.setCellValueFactory(new PropertyValueFactory<Order, Integer>("orderNumber"));
         dateColumnO.setCellValueFactory(new PropertyValueFactory<Order, Date>("date"));
         tableOrders.setItems(collectionSklad.getOrdersArrayList());
+        updatelabelCountOrders();
     }
 
     private void initializeTableSup() {
@@ -136,6 +147,7 @@ public class Controller {
         addressColumnS.setCellValueFactory(new PropertyValueFactory<Supplier, String>("address"));
         telColumnS.setCellValueFactory(new PropertyValueFactory<Supplier, String>("phone"));
         tableSuppliers.setItems(collectionSklad.getSuppliersArrayList()); //заполнили таблицу данными из коллекции
+        updatelabelCountSuppliers();
     }
 
     //=====================INIT LOADERS===============================================
@@ -177,6 +189,17 @@ public class Controller {
 
             }
         });
+        collectionSklad.getSuppliersArrayList().addListener(new ListChangeListener<Product>() {//реализация с анонимным классом
+            @Override
+            public void onChanged(Change<? extends Product> change) {
+                Controller.this.updatelabelCountSuppliers(); //слушатель на изменения коллекции продуктов
+                if (controllerDialogSup != null) { //обновляем коллекцию для контроллера окна поставщиков
+                    controllerDialogSup.setCollectionSklad(collectionSklad);
+                }
+            }
+        });
+        //TODO добавить слушатель на изменения списка заказов, по которому сделать обновление статист надписи
+
 
         tableProducts.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() { //если щелкнули мышкой на таблице
             @Override
@@ -227,36 +250,50 @@ public class Controller {
     }
 
     //=====================CLICK BUTTONS===============================================
-    public void clickBtn(javafx.event.ActionEvent actionEvent) throws SQLException { //СОЗДАЕМ ДИАЛОГОВОЕ ОКНО ПРОДУКТОВ
+    public void clickBtn(javafx.event.ActionEvent actionEvent) throws SQLException, IOException { //СОЗДАЕМ ДИАЛОГОВОЕ ОКНО ПРОДУКТОВ
         Object source = actionEvent.getSource();
         if (!(source instanceof Button)) {//если нажата не кнопка, то выходим из метода
             return;
         }
         Button clickedButton = (Button) source;
-        Product selectedProduct = tableProducts.getSelectionModel().getSelectedItem();//запомнили выделенную строку
+        SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
+        String tabText = selectionModel.getSelectedItem().getText();
+        System.out.println(tabText);
+        switch (tabText) {
+            case "Товары":
+                Product selectedProduct = tableProducts.getSelectionModel().getSelectedItem();//запомнили выделенную строку
 
-        switch (clickedButton.getId()) {
-            case "butAddProd"://кнопка Добавить
-                controllerDialog.setProduct(null);//передаем в контроллер диалОкна новый объект продукта
-                controllerDialog.setEdit(false);
-                showDlgProd();
-                if (controllerDialog.getProduct() != null) {//если не заполнили одно из полей
-                    collectionSklad.create(controllerDialog.getProduct());//получаем объект и добавляем в коллекцию
+                switch (clickedButton.getId()) {
+                    case "butAddProd"://кнопка Добавить
+                        controllerDialog.setProduct(null);//передаем в контроллер диалОкна новый объект продукта
+                        controllerDialog.setEdit(false);
+                        showDlgProd();
+                        if (controllerDialog.getProduct() != null) {//если не заполнили одно из полей
+                            collectionSklad.create(controllerDialog.getProduct());//получаем объект и добавляем в коллекцию
+                        }
+                        break;
+                    case "butUpProd"://кнопка Изменить
+                        if (collectionSklad.getProductArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
+                            return;
+                        }
+                        controllerDialog.setEdit(true);
+                        controllerDialog.setProduct(selectedProduct); //запомнили выделенную строку таблицы
+                        showDlgProd(); //создание диалогового окна
+                        break;
+                    case "butDelProd"://кнопка Удалить
+                        Connect.deleteDB(selectedProduct);
+                        collectionSklad.delete(selectedProduct);
+                        break;
                 }
                 break;
-            case "butUpProd"://кнопка Изменить
-                if (collectionSklad.getProductArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
-                    return;
-                }
-                controllerDialog.setEdit(true);
-                controllerDialog.setProduct(selectedProduct); //запомнили выделенную строку таблицы
-                showDlgProd(); //создание диалогового окна
+            case "Поставщики":
+                clickBtnSup(actionEvent);
                 break;
-            case "butDelProd"://кнопка Удалить
-                Connect.deleteDB(selectedProduct);
-                collectionSklad.delete(selectedProduct);
-                break;
+            case "Заказы":
+                clickBtnOrder(actionEvent);
         }
+
+
     }
 
     public void clickBtnSup(ActionEvent actionEvent) throws SQLException { //СОЗДАЕМ ОКНО ПОСТАВЩИКОВ
@@ -268,7 +305,7 @@ public class Controller {
         Supplier selectedSupplier = tableSuppliers.getSelectionModel().getSelectedItem();//запомнили выделенную строку
 
         switch (clickedButton.getId()) {
-            case "butAddSup"://кнопка Добавить
+            case "butAddProd"://кнопка Добавить
                 controllerDialogSup.setEdit(false);
                 controllerDialogSup.setSupplier(null);//передаем в контроллер диалОкна новый объект поставщика
                 showDlgSup();
@@ -276,7 +313,7 @@ public class Controller {
                     collectionSklad.create(controllerDialogSup.getSupplier());//получаем объект и добавляем в коллекцию
                 }
                 break;
-            case "butUpSup"://кнопка Изменить
+            case "butUpProd"://кнопка Изменить
                 if (collectionSklad.getSuppliersArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
                     return;
                 }
@@ -284,7 +321,7 @@ public class Controller {
                 controllerDialogSup.setSupplier(selectedSupplier); //запомнили выделенную строку таблицы
                 showDlgSup(); //создание диалогового окна
                 break;
-            case "butDelSup"://кнопка Удалить
+            case "butDelProd"://кнопка Удалить
                 collectionSklad.delete(selectedSupplier);
                 tableProducts.setItems(collectionSklad.getProductArrayList());
                 break;
@@ -299,7 +336,7 @@ public class Controller {
         Button clickedButton = (Button) source;
         Order selectedOrder = tableOrders.getSelectionModel().getSelectedItem();//запомнили выделенную строку
         switch (clickedButton.getId()) {
-            case "butAddOrder"://кнопка Добавить
+            case "butAddProd"://кнопка Добавить
                 controllerForAddOrder.setOrder(new Order());//передаем в контроллер диалОкна новый объект Заказ
                 controllerForAddOrder.setEdit(false);//передаем, что НЕ в режиме редактирования
                 showDlgOrder();
@@ -307,7 +344,7 @@ public class Controller {
                     collectionSklad.create(controllerForAddOrder.getOrder());//получаем объект и добавляем в коллекцию
                 }
                 break;
-            case "butUpOrder"://кнопка Изменить
+            case "butUpProd"://кнопка Изменить
                 if (collectionSklad.getOrdersArrayList().size() == 0) { //когда нет записей, нельзя ничего изменить
                     return;
                 }
@@ -329,10 +366,21 @@ public class Controller {
                     e.printStackTrace();
                 }
                 break;
-            case "butDelOrder"://кнопка Удалить
+            case "butDelProd"://кнопка Удалить
                 collectionSklad.delete(selectedOrder);
                 break;
         }
+    }
+
+    public void clickBtnRefresh(ActionEvent actionEvent) throws SQLException {
+        Object source = actionEvent.getSource();
+        if (!(source instanceof Button)) {//если нажата не кнопка, то выходим из метода
+            return;
+        }
+        Button clickedButton = (Button) source;
+        collectionSklad.clearLists();
+        collectionSklad.fillInitFromDb();
+
     }
 
     //=====================SHOW DIALOG WINDOW===============================================
@@ -390,6 +438,14 @@ public class Controller {
 
     private void updatelabelCountProducts() {
         labelCountProducts.setText("Количество записей товаров: " + collectionSklad.getProductArrayList().size());
+    }
+
+    private void updatelabelCountSuppliers() {
+        labelCountSuppliers.setText("Количество Поставщиков: " + collectionSklad.getSuppliersArrayList().size());
+    }
+
+    private void updatelabelCountOrders() {
+        labelCountOrders.setText("Количество Заказов: " + collectionSklad.getOrdersArrayList().size());
     }
 
     public void setMainStage(Stage stage) {
