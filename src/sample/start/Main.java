@@ -5,7 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import sample.controllers.Controller;
+import sample.controllers.LoginController;
+import sample.controllers.MainController;
 import sample.db.Connect;
 
 import java.io.IOException;
@@ -15,14 +16,15 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Connect.conn();//подключение к БД
-        //подгружаем ресурсы JavaFX, инициализируем Controller
-        FXMLLoader fxmlLoaderMain = new FXMLLoader(getClass().getResource("../fxml/sample.fxml"));
-        Parent root = (Parent) fxmlLoaderMain.load();
-        Controller mainController = fxmlLoaderMain.getController();
-        mainController.setMainStage(primaryStage); //передаем primaryStage в главный контроллер программы
+        //подгружаем ресурсы JavaFX,
+
+        FXMLLoader fxmlLoaderLogin = new FXMLLoader(getClass().getResource("../fxml/Login.fxml"));
+        Parent root = (Parent) fxmlLoaderLogin.load();
+        LoginController loginController = fxmlLoaderLogin.getController();
+        loginController.setPrimaryStage(primaryStage);
         //иниц Сцены
-        primaryStage.setTitle("Система СКЛАД");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setTitle("Авторизация");
+        primaryStage.setScene(new Scene(root, 400, 199));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

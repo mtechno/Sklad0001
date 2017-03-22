@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class Connect {
     public static Connection connection;
-    //TODO Connection, Statement, ResultSet должны быть в пределах одного метода, не нужно объявлять их полями класса
+    //TODO переделать Statement на PreparedStatement
     //объявлять их нужно до конструкции try catch finally
     //можно создать свой класс исключений, в который пробрасывать их из catch
     //method{ Connction, RS, Statement = null

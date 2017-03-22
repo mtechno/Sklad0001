@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 
-public class CtrlAddAmountOrderedProduct {
+public class OrderedProductController {
     @FXML
     Button butCancelDialog;
     @FXML
